@@ -34,7 +34,17 @@
     var attLoc = gl.getAttribLocation(prg, 'a_position');
     var attLoc2 = gl.getAttribLocation(prg, 'a_color');
 
-    var viewMatrix = mat4();
+    var uniLoc = gl.getUniformLocation(prg, 'u_mvpMatrix');
+
+    var viewMatrix  = mat4.identity(mat4());
+    var modelMatrix = mat4.identity(mat4());
+    var projMatrix  = mat4.identity(mat4());
+    var mvpMatrix   = mat4.identity(mat4());
+
+    mat4.lookAt(new Vector3(0, 0, 10), new Vector3(0, 0, 0), new Vector3(0, 1, 0), viewMatrix);
+    mat4.perspective(60, w / h, 1, 100, projMatrix);
+    mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
+    mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
 
     gl.enableVertexAttribArray(attLoc);
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
@@ -44,7 +54,11 @@
     gl.bindBuffer(gl.ARRAY_BUFFER, color_vbo);
     gl.vertexAttribPointer(attLoc2, 4, gl.FLOAT, false, 0, 0);
 
+    gl.uniformMatrix4fv(uniLoc, false, mvpMatrix);
+
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    gl.flush();
 
 }(window, document));
