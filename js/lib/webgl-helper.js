@@ -2,10 +2,167 @@
 
     'use strict';
 
+    var gl;
+
     var WebGLHelper = {
-        property: value
+
+        /**
+         * Set parameters to the gl viewport.
+         * @param {number} x
+         * @param {number} y
+         * @param {number} w
+         * @param {number} h
+         */
+        setViewport: function (x, y, w, h) {
+            gl.viewport(x, y, w, h);
+        },
+
+        /**
+         * Set parameters to the gl clear color.
+         * @param {number} r
+         * @param {number} g
+         * @param {number} b
+         * @param {number} a
+         */
+        setClearColor: function (r, g, b, a) {
+            gl.clearColor(r, g, b, a);
+        },
+
+        /**
+         * Set a WebGL context.
+         * @param {WebGLContext}
+         */
+        setGLContext: function (context) {
+            gl = context;
+        },
+
+        /**
+         * Get the current WebGL context.
+         * @return {WebGLContext}
+         */
+        getCurrentContext: function () {
+            return gl;
+        },
+
+        /**
+         * Get shader source from DOM text
+         * @param {string} id
+         * @return {string} DOM's inner html.
+         */
+        getShaderSourceFromDOM: function (id) {
+            var dom = doc.getElementById(id);
+
+            if (!dom) {
+                return null;
+            }
+
+            return dom.innerHTML;
+        },
+
+        /**
+         * Get a WebGL context
+         * @param {CanvasElement} canvas
+         * @return {WebGLContext}
+         */
+        getGLContext: function (canvas) {
+
+            var context,
+                names = ['webgl', 'experimental-webgl'];
+
+            if (!canvas.getContext) {
+                alert('This browser doesn\'t suppoert canvas!');
+            }
+
+            for (var i = 0, l = names.length; i < l; i++) {
+                try {
+                    context = canvas.getContext(names[i]);
+                }
+                catch (e) {}
+
+                if (context) {
+                    break;
+                }
+            }
+
+            if (!context) {
+                alert('This browser doesn\'t suppoert WebGL!');
+            }
+
+            WebGLHelper.setGLContext(context);
+            return context;
+        },
+
+        /**
+         * Create a shader with a source.
+         * @param {WebGLContext} gl
+         * @param {string} type shader type
+         * @param {string} source shader source
+         * @return {WebGLShader}
+         */
+        createShader: function (type, source) {
+
+            var shader;
+
+            if (type === 'vertex') {
+                shader = gl.createShader(gl.VERTEX_SHADER);
+            }
+            else if (type === 'fragment') {
+                shader = gl.createShader(gl.FRAGMENT_SHADER);
+            }
+
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+
+            if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+                alert(gl.getShaderInfoLog(shader));
+                return null;
+            }
+
+            return shader;
+        },
+
+        /**
+         * Create a program with vertex shader and fragment shader.
+         * @param {WebGLContext} gl
+         * @param {WebGLShader} vertex_shader
+         * @param {WebGLShader} fragment_shader
+         * @return {WebGLProgram}
+         */
+        createProgram: function (vertex_shader, fragment_shader) {
+            var program = gl.createProgram();
+            gl.attachShader(program, vertex_shader);
+            gl.attachShader(program, fragment_shader);
+            gl.linkProgram(program);
+
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+                alert(gl.getProgramInfoLog(program));
+                return null;
+            }
+
+            gl.useProgram(program);
+
+            return program;
+        },
+
+        /**
+         * Create a buffer.
+         */
+        createBuffer: function (type, data) {
+            var buffer = gl.createBuffer();
+
+            if (type === 'vbo') {
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+            }
+            else if (type === 'ibo') {
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+                gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW);
+            }
+
+            return buffer;
+        }
     };
 
-    window.WebGLHelper = WebGLHelper;
+    window.WebGLHelper = window.$gl = WebGLHelper;
 
 }(window, document, window));
