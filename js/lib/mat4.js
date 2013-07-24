@@ -11,17 +11,18 @@
         DEG_TO_RAD = PI / 180;
 
     /**
-     * Matrix4 class
-     * @constructor
-     * @class
+     * mat4
      */
-    function Matrix4() {}
+    function mat4(elements) {
+        return mat4.create(elements);
+    }
 
-    Matrix4.prototype.create = function() {
-        return new Float32Array(16);
+    mat4.create = function(elements) {
+        elements || (elements = 16);
+        return new Float32Array(elements);
     };
 
-    Matrix4.prototype.identity = function(mat) {
+    mat4.identity = function(mat) {
         mat[0] = 1; mat[4] = 0; mat[8]  = 0; mat[12] = 0;
         mat[1] = 0; mat[5] = 1; mat[9]  = 0; mat[13] = 0;
         mat[2] = 0; mat[6] = 0; mat[10] = 1; mat[14] = 0;
@@ -34,7 +35,7 @@
      * @param {Float32Array} mat1
      * @param {Float32Array} mat2
      */
-    Matrix4.prototype.equal = function(mat1, mat2) {
+    mat4.equal = function(mat1, mat2) {
         return (mat1[0] === mat2[0]) && (mat1[4] === mat2[4]) && (mat1[8] === mat2[8]) && (mat1[12] === mat2[12]) && (mat1[1] === mat2[1]) && (mat1[5] === mat2[5]) && (mat1[9] === mat2[9]) && (mat1[13] === mat2[13]) && (mat1[2] === mat2[2]) && (mat1[6] === mat2[6]) && (mat1[10] === mat2[10]) && (mat1[14] === mat2[14]) && (mat1[3] === mat2[3]) && (mat1[7] === mat2[7]) && (mat1[11] === mat2[11]) && (mat1[15] === mat2[15]);
     };
 
@@ -43,7 +44,7 @@
      * @param {Float32Array} mat
      * @param {Float32Array} dest
      */
-    Matrix4.prototype.getInvert = function(mat, dest) {
+    mat4.getInvert = function(mat, dest) {
 
         var a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44,
             b11, b12, b13, b14, b21, b22, b23, b24, b31, b32, b33, b34, b41, b42, b43, b44,
@@ -102,7 +103,7 @@
      * @param {Float32Array} mat
      * @param {Float32Array} dest
      */
-    Matrix4.prototype.copy = function(mat, dest) {
+    mat4.copy = function(mat, dest) {
         dest[0] = mat[0]; dest[4] = mat[4]; dest[8] = mat[8]; dest[12] = mat[12];
         dest[1] = mat[1]; dest[5] = mat[5]; dest[9] = mat[9]; dest[13] = mat[13];
         dest[2] = mat[2]; dest[6] = mat[6]; dest[10] = mat[10]; dest[14] = mat[14];
@@ -110,27 +111,36 @@
         return dest;
     };
 
-    Matrix4.prototype.makeFrustum = function(left, right, bottom, top, near, far) {
-        var a, b, c, d, te, vh, vw, x, y;
-        te = this.elements;
+    /**
+     * Make frustum
+     * @param {number} left
+     * @param {number} right
+     * @param {number} bottom
+     * @param {number} top
+     * @param {number} near
+     * @param {number} far
+     * @param {mat4} dest
+     */
+    mat4.makeFrustum = function(left, right, bottom, top, near, far, dest) {
+
+        var a, b, c, d, vh, vw, x, y;
+
         vw = right - left;
         vh = top - bottom;
         x = 2 * near / vw;
         y = 2 * near / vh;
+
         a = (right + left) / (right - left);
         b = (top + bottom) / (top - bottom);
         c = -(far + near) / (far - near);
         d = -(2 * near * far) / (far - near);
-        te[0] = x; te[4] = 0; te[8] = a; te[12] = 0;
-        te[1] = 0; te[5] = y; te[9] = b; te[13] = 0;
-        te[2] = 0; te[6] = 0; te[10] = c; te[14] = d;
-        te[3] = 0; te[7] = 0; te[11] = -1; te[15] = 0;
-        return this;
-    };
 
-    Matrix4.prototype.perspectiveLH = function(fov, aspect, near, far) {
-        var tmp = Matrix4.perspectiveLH(fov, aspect, near, far);
-        return this.copy(tmp);
+        dest[0] = x; dest[4] = 0; dest[8] = a; dest[12] = 0;
+        dest[1] = 0; dest[5] = y; dest[9] = b; dest[13] = 0;
+        dest[2] = 0; dest[6] = 0; dest[10] = c; dest[14] = d;
+        dest[3] = 0; dest[7] = 0; dest[11] = -1; dest[15] = 0;
+
+        return dest;
     };
 
     /**
@@ -140,15 +150,15 @@
      * @param {number} near
      * @param {number} far
      */
-    Matrix4.perspectiveLH = function(fov, aspect, near, far) {
-        var te, tmp, xmax, xmin, ymax, ymin;
-        tmp = new Matrix4();
-        te = tmp.elements;
+    mat4.perspective = function(fov, aspect, near, far, dest) {
+        var xmax, xmin, ymax, ymin;
+
         ymax = near * tan(fov * DEG_TO_RAD * 0.5);
         ymin = -ymax;
         xmin = ymin * aspect;
         xmax = ymax * aspect;
-        return tmp.makeFrustum(xmin, xmax, ymin, ymax, near, far);
+
+        return makeFrustum(xmin, xmax, ymin, ymax, near, far, dest);
     };
 
     /**
@@ -157,11 +167,11 @@
      * @param {Float32Array} B
      * @param {Float32Array} dest
      */
-    Matrix4.prototype.multiply = function(A, B, dest) {
+    mat4.multiply = function(A, B, dest) {
 
         var A11, A12, A13, A14, A21, A22, A23, A24, A31, A32, A33, A34, A41, A42, A43, A44,
             B11, B12, B13, B14, B21, B22, B23, B24, B31, B32, B33, B34, B41, B42, B43, B44,
-            ae, be, te, tmp;
+            ae, be;
 
         ae = A;
         be = B;
@@ -176,20 +186,20 @@
         B31 = be[2]; B32 = be[6]; B33 = be[10]; B34 = be[14];
         B41 = be[3]; B42 = be[7]; B43 = be[11]; B44 = be[15];
 
-        dest[0] = A11 * B11 + A12 * B21 + A13 * B31 + A14 * B41;
-        dest[4] = A11 * B12 + A12 * B22 + A13 * B32 + A14 * B42;
-        dest[8] = A11 * B13 + A12 * B23 + A13 * B33 + A14 * B43;
+        dest[0]  = A11 * B11 + A12 * B21 + A13 * B31 + A14 * B41;
+        dest[4]  = A11 * B12 + A12 * B22 + A13 * B32 + A14 * B42;
+        dest[8]  = A11 * B13 + A12 * B23 + A13 * B33 + A14 * B43;
         dest[12] = A11 * B14 + A12 * B24 + A13 * B34 + A14 * B44;
-        dest[1] = A21 * B11 + A22 * B21 + A23 * B31 + A24 * B41;
-        dest[5] = A21 * B12 + A22 * B22 + A23 * B32 + A24 * B42;
-        dest[9] = A21 * B13 + A22 * B23 + A23 * B33 + A24 * B43;
+        dest[1]  = A21 * B11 + A22 * B21 + A23 * B31 + A24 * B41;
+        dest[5]  = A21 * B12 + A22 * B22 + A23 * B32 + A24 * B42;
+        dest[9]  = A21 * B13 + A22 * B23 + A23 * B33 + A24 * B43;
         dest[13] = A21 * B14 + A22 * B24 + A23 * B34 + A24 * B44;
-        dest[2] = A31 * B11 + A32 * B21 + A33 * B31 + A34 * B41;
-        dest[6] = A31 * B12 + A32 * B22 + A33 * B32 + A34 * B42;
+        dest[2]  = A31 * B11 + A32 * B21 + A33 * B31 + A34 * B41;
+        dest[6]  = A31 * B12 + A32 * B22 + A33 * B32 + A34 * B42;
         dest[10] = A31 * B13 + A32 * B23 + A33 * B33 + A34 * B43;
         dest[14] = A31 * B14 + A32 * B24 + A33 * B34 + A34 * B44;
-        dest[3] = A41 * B11 + A42 * B21 + A43 * B31 + A44 * B41;
-        dest[7] = A41 * B12 + A42 * B22 + A43 * B32 + A44 * B42;
+        dest[3]  = A41 * B11 + A42 * B21 + A43 * B31 + A44 * B41;
+        dest[7]  = A41 * B12 + A42 * B22 + A43 * B32 + A44 * B42;
         dest[11] = A41 * B13 + A42 * B23 + A43 * B33 + A44 * B43;
         dest[15] = A41 * B14 + A42 * B24 + A43 * B34 + A44 * B44;
 
@@ -201,7 +211,7 @@
      * @param {Vector3} v
      * @param {Float32Array} dest
      */
-    Matrix4.prototype.translate = function(mat, v, dest) {
+    mat4.translate = function(mat, v, dest) {
 
         var x, y, z;
 
@@ -209,9 +219,9 @@
         y = v.y;
         z = v.z;
 
-        dest[0] = mat[0]; dest[1] = mat[1]; dest[2]  = mat[2];  dest[3]  = mat[3];
-        dest[4] = mat[4]; dest[5] = mat[5]; dest[6]  = mat[6];  dest[7]  = mat[7];
-        dest[8] = mat[8]; dest[9] = mat[9]; dest[10] = mat[10]; dest[11] = mat[11];
+        dest[0]  = mat[0]; dest[1] = mat[1]; dest[2]  = mat[2];  dest[3]  = mat[3];
+        dest[4]  = mat[4]; dest[5] = mat[5]; dest[6]  = mat[6];  dest[7]  = mat[7];
+        dest[8]  = mat[8]; dest[9] = mat[9]; dest[10] = mat[10]; dest[11] = mat[11];
         dest[12] = mat[0] * x + mat[4] * y + mat[8]  * z + mat[12];
         dest[13] = mat[1] * x + mat[5] * y + mat[9]  * z + mat[13];
         dest[14] = mat[2] * x + mat[6] * y + mat[10] * z + mat[14];
@@ -226,7 +236,7 @@
      * @param {Vector3} v
      * @param {Float32Array} dest
      */
-    Matrix4.prototype.scale = function(mat, v, dest) {
+    mat4.scale = function(mat, v, dest) {
 
         var x, y, z;
 
@@ -258,9 +268,9 @@
      * Create rotation matrix with any axis.
      * @param {number} angle
      * @param {Vector3} axis
-     * @return {Matrix4} this
+     * @return {mat4} this
      */
-    Matrix4.prototype.rotate = function(mat, angle, axis, dest) {
+    mat4.rotate = function(mat, angle, axis, dest) {
 
         var x = axis.x, y = axis.y, z = axis.z,
             sq = sqrt(x * x + y * y + z * z);
@@ -291,7 +301,7 @@
             i = y * si,
             j = z * si;
 
-        var m = new Matrix4();
+        var m = new mat4();
         var rot = m.identity(m.create());
 
         rot[0] = b * a + co; rot[4] = e * a - j;  rot[8]  = f * a + i;
@@ -302,38 +312,37 @@
     };
 
 
-    //TODO
     /**
-      @param {Vector3} eye
-      @param {Vector3} target
-      @param {Vector3} up
-      */
-    Matrix4.prototype.lookAt = (function() {
-        var x, y, z;
-        x = new Vector3();
-        y = new Vector3();
-        z = new Vector3();
+     * @param {Vector3} eye
+     * @param {Vector3} target
+     * @param {Vector3} up
+     * @param {mat4} dest
+     */
+    mat4.lookAt = function(eye, target, up, dest) {
 
-        return function(eye, target, up) {
-            var te, tx, ty, tz;
-            te = this.elements;
-            z.subVectors(eye, target).normalize();
-            x.crossVectors(z, up).normalize();
-            y.crossVectors(x, z).normalize();
-            tx = eye.dot(x);
-            ty = eye.dot(y);
-            tz = eye.dot(z);
-            te[0] = x.x; te[4] = x.y; te[8] = x.z; te[12] = -tx;
-            te[1] = y.x; te[5] = y.y; te[9] = y.z; te[13] = -ty;
-            te[2] = z.x; te[6] = z.y; te[10] = z.z; te[14] = -tz;
-            return this;
-        };
-    })();
+        var x = new Vector3(),
+            y = new Vector3(),
+            z = new Vector3(),
+            tx, ty, tz;
+
+        z.subVectors(eye, target).normalize();
+        x.crossVectors(z, up).normalize();
+        y.crossVectors(x, z).normalize();
+        tx = eye.dot(x);
+        ty = eye.dot(y);
+        tz = eye.dot(z);
+
+        dest[0] = x.x; dest[4] = x.y; dest[8] = x.z;  dest[12] = -tx;
+        dest[1] = y.x; dest[5] = y.y; dest[9] = y.z;  dest[13] = -ty;
+        dest[2] = z.x; dest[6] = z.y; dest[10] = z.z; dest[14] = -tz;
+
+        return dest;
+    };
 
 
     /*!--------------------------------------------------
       EXPORTS
       ----------------------------------------------------- */
-    exports.Matrix4 = Matrix4;
+    exports.mat4 = mat4;
 
 }(window, document, window));
