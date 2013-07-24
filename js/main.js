@@ -34,6 +34,8 @@
     var attLoc = gl.getAttribLocation(prg, 'a_position');
     var attLoc2 = gl.getAttribLocation(prg, 'a_color');
 
+    var viewMatrix = mat4();
+
     gl.enableVertexAttribArray(attLoc);
     gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
     gl.vertexAttribPointer(attLoc, 3, gl.FLOAT, false, 0, 0);
