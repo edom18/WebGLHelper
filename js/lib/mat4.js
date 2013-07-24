@@ -5,6 +5,7 @@
 
     var sin = Math.sin,
         cos = Math.cos,
+        tan = Math.tan,
         sqrt = Math.sqrt,
         PI   = Math.PI,
 
@@ -158,7 +159,7 @@
         xmin = ymin * aspect;
         xmax = ymax * aspect;
 
-        return makeFrustum(xmin, xmax, ymin, ymax, near, far, dest);
+        return mat4.makeFrustum(xmin, xmax, ymin, ymax, near, far, dest);
     };
 
     /**
