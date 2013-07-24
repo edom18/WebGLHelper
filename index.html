@@ -3,14 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <title>WebGL test</title>
+<style type="text/css">
+    body {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<script id="vs" type="x-shader/x-vertex">
+    attribute vec3 a_position;
+    attribute vec4 a_color;
+
+    varying vec4 v_color;
+
+    void main() {
+        v_color = a_color;
+        gl_Position = vec4(a_position, 1.0);
+    }
+</script>
+<script id="fs" type="x-shader/x-fragument">
+    precision mediump float;
+
+    varying vec4 v_color;
+    void main() {
+        gl_FragColor = v_color;
+    }
+</script>
 </head>
 <body>
     <canvas id="cv"></canvas>
     <script src="js/lib/util.js"></script>
-    <script src="js/lib/Matrix4.js"></script>
-    <script src="js/lib/Quaternion.js"></script>
     <script src="js/lib/Vector3.js"></script>
     <script src="js/lib/Vector4.js"></script>
+    <script src="js/lib/Matrix4.js"></script>
+    <script src="js/lib/Quaternion.js"></script>
     <script src="js/lib/webgl-helper.js"></script>
     <script src="js/main.js"></script>
 </body>
