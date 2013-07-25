@@ -36,29 +36,40 @@
 
     var uniLoc = gl.getUniformLocation(prg, 'u_mvpMatrix');
 
-    var viewMatrix  = mat4.identity(mat4());
-    var modelMatrix = mat4.identity(mat4());
-    var projMatrix  = mat4.identity(mat4());
-    var mvpMatrix   = mat4.identity(mat4());
-
-    mat4.lookAt(new Vector3(0, 0, 10), new Vector3(0, 0, 0), new Vector3(0, 1, 0), viewMatrix);
-    mat4.perspective(60, w / h, 1, 100, projMatrix);
-    mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
-    mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
-
     gl.enableVertexAttribArray(attLoc);
-    gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-    gl.vertexAttribPointer(attLoc, 3, gl.FLOAT, false, 0, 0);
-
     gl.enableVertexAttribArray(attLoc2);
-    gl.bindBuffer(gl.ARRAY_BUFFER, color_vbo);
-    gl.vertexAttribPointer(attLoc2, 4, gl.FLOAT, false, 0, 0);
 
-    gl.uniformMatrix4fv(uniLoc, false, mvpMatrix);
+    var x = 0;
+    var t = 0;
 
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    (function loop() {
 
-    gl.flush();
+        var viewMatrix  = mat4.identity(mat4());
+        var modelMatrix = mat4.identity(mat4());
+        var projMatrix  = mat4.identity(mat4());
+        var mvpMatrix   = mat4.identity(mat4());
+
+        t += 0.01;
+        x = Math.sin(t) * 10;
+        mat4.lookAt(vec3(x, 0, 10), vec3(0, 0, 0), vec3(0, 1, 0), viewMatrix);
+        mat4.perspective(60, w / h, 1, 100, projMatrix);
+        mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
+        mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+        gl.vertexAttribPointer(attLoc, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, color_vbo);
+        gl.vertexAttribPointer(attLoc2, 4, gl.FLOAT, false, 0, 0);
+
+        gl.uniformMatrix4fv(uniLoc, false, mvpMatrix);
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+        gl.flush();
+
+        requestAnimationFrame(loop);
+    }());
 
 }(window, document));

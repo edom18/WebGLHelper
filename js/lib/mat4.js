@@ -209,16 +209,14 @@
 
     /**
      * @param {Float32Array} mat
-     * @param {Vector3} v
+     * @param {Float32Array} v
      * @param {Float32Array} dest
      */
     mat4.translate = function(mat, v, dest) {
 
-        var x, y, z;
-
-        x = v.x;
-        y = v.y;
-        z = v.z;
+        var x = v[0],
+            y = v[1],
+            z = v[2];
 
         dest[0]  = mat[0]; dest[1] = mat[1]; dest[2]  = mat[2];  dest[3]  = mat[3];
         dest[4]  = mat[4]; dest[5] = mat[5]; dest[6]  = mat[6];  dest[7]  = mat[7];
@@ -234,16 +232,14 @@
     /**
      * Scale matrix
      * @param {Float32Array} mat
-     * @param {Vector3} v
+     * @param {Float32Array} v
      * @param {Float32Array} dest
      */
     mat4.scale = function(mat, v, dest) {
 
-        var x, y, z;
-
-        x = v.x;
-        y = v.y;
-        z = v.z;
+        var x = v[0],
+            y = v[1],
+            z = v[2];
 
         dest[0]  = mat[0]  * x;
         dest[1]  = mat[1]  * x;
@@ -268,12 +264,12 @@
     /**
      * Create rotation matrix with any axis.
      * @param {number} angle
-     * @param {Vector3} axis
+     * @param {Float32Array} axis
      * @return {mat4} this
      */
     mat4.rotate = function(mat, angle, axis, dest) {
 
-        var x = axis.x, y = axis.y, z = axis.z,
+        var x = axis[0], y = axis[1], z = axis[2],
             sq = sqrt(x * x + y * y + z * z);
 
         if(!sq){
@@ -302,7 +298,7 @@
             i = y * si,
             j = z * si;
 
-        var m = new mat4();
+        var m = mat4();
         var rot = m.identity(m.create());
 
         rot[0] = b * a + co; rot[4] = e * a - j;  rot[8]  = f * a + i;
@@ -314,28 +310,41 @@
 
 
     /**
-     * @param {Vector3} eye
-     * @param {Vector3} target
-     * @param {Vector3} up
+     * @param {Float32Array} eye
+     * @param {Float32Array} target
+     * @param {Float32Array} up
      * @param {mat4} dest
      */
     mat4.lookAt = function(eye, target, up, dest) {
 
-        var x = new Vector3(),
-            y = new Vector3(),
-            z = new Vector3(),
+        var x = vec3(),
+            y = vec3(),
+            z = vec3(),
             tx, ty, tz;
 
-        z.subVectors(eye, target).normalize();
-        x.crossVectors(z, up).normalize();
-        y.crossVectors(x, z).normalize();
-        tx = eye.dot(x);
-        ty = eye.dot(y);
-        tz = eye.dot(z);
+        vec3.normalize(vec3.sub(eye, target, z));
+        vec3.normalize(vec3.cross(z, up, x));
+        vec3.normalize(vec3.cross(x, z, y));
 
-        dest[0] = x.x; dest[4] = x.y; dest[8] = x.z;  dest[12] = -tx;
-        dest[1] = y.x; dest[5] = y.y; dest[9] = y.z;  dest[13] = -ty;
-        dest[2] = z.x; dest[6] = z.y; dest[10] = z.z; dest[14] = -tz;
+        tx = vec3.dot(eye, x);
+        ty = vec3.dot(eye, y);
+        tz = vec3.dot(eye, z);
+
+        var xx = x[0],
+            xy = x[1],
+            xz = x[2],
+
+            yx = y[0],
+            yy = y[1],
+            yz = y[2],
+
+            zx = z[0],
+            zy = z[1],
+            zz = z[2];
+
+        dest[0] = xx; dest[4] = xy; dest[8]  = xz; dest[12] = -tx;
+        dest[1] = yx; dest[5] = yy; dest[9]  = yz; dest[13] = -ty;
+        dest[2] = zx; dest[6] = zy; dest[10] = zz; dest[14] = -tz;
 
         return dest;
     };
