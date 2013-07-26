@@ -15,7 +15,20 @@
      * mat4
      */
     function mat4(elements) {
-        return mat4.create(elements);
+        var ele = [];
+
+        if (elements === undefined) {
+            return mat4.identity(mat4.create());
+        }
+        else if (Array.isArray(elements)) {
+            return mat4.create(elements);
+        }
+        else {
+            for (var i = 0; i < 16; i++) {
+                ele.push(arguments[i] || 0);
+            }
+            return mat4.create(ele);
+        }
     }
 
     mat4.create = function(elements) {
@@ -285,7 +298,8 @@
 
         angle = angle * DEG_TO_RAD;
 
-        var co = cos(angle),
+        var rot = mat4(),
+            co = cos(angle),
             si = sin(angle),
             a = (1 - co),
             b = x * x,
@@ -298,14 +312,12 @@
             i = y * si,
             j = z * si;
 
-        var m = mat4();
-        var rot = m.identity(m.create());
 
         rot[0] = b * a + co; rot[4] = e * a - j;  rot[8]  = f * a + i;
         rot[1] = e * a + j;  rot[5] = c * a + co; rot[9]  = g * a - h;
         rot[2] = f * a - i;  rot[6] = g * a + h;  rot[10] = d * a + co;
 
-        return m.multiply(mat, rot, dest);
+        return mat4.multiply(mat, rot, dest);
     };
 
 
