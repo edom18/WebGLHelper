@@ -43,8 +43,17 @@
         if (Array.isArray(x)) {
             elements = x;
         }
+        else if (x === undefined) {
+            elements = [0, 0, 0];
+        }
+        else if (y === undefined) {
+            elements = [x, x, x];
+        }
+        else if (z === undefined) {
+            elements = [x, y, 0];
+        }
         else {
-            elements = [x || 0, y || 0, z || 0];
+            elements = [x, y, z];
         }
 
         return new Float32Array(elements);
