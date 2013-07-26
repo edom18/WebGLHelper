@@ -41,17 +41,20 @@
 
     var x = 0;
     var t = 0;
+    var angle = 0;
 
     (function loop() {
 
-        var viewMatrix  = mat4.identity(mat4());
-        var modelMatrix = mat4.identity(mat4());
-        var projMatrix  = mat4.identity(mat4());
-        var mvpMatrix   = mat4.identity(mat4());
+        var viewMatrix  = mat4();
+        var modelMatrix = mat4();
+        var projMatrix  = mat4();
+        var mvpMatrix   = mat4();
 
         t += 0.01;
-        x = Math.sin(t) * 10;
-        mat4.lookAt(vec3(x, 0, 10), vec3(0, 0, 0), vec3(0, 1, 0), viewMatrix);
+        //x = Math.sin(t) * 10;
+        angle = (angle + 1) % 360;
+        mat4.rotate(modelMatrix, angle, vec3(0, 1, 0), modelMatrix);
+        mat4.lookAt(vec3(0, 0, 10), vec3(0, 0, 0), vec3(0, 1, 0), viewMatrix);
         mat4.perspective(60, w / h, 1, 100, projMatrix);
         mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
         mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
