@@ -88,6 +88,36 @@
             assert.equal(3, v[1]);
             assert.equal(4, v[2]);
         });
+
+        it('vec3.sub()でベクトルの減算ができる。その際、元のベクトルは操作されない。', function () {
+            var v1 = vec3(2, 3, 4);
+            var v2 = vec3(2, 3, 4);
+            var v3 = vec3.sub(v1, v2, vec3());
+            assert.equal(0, v3[0]);
+            assert.equal(0, v3[1]);
+            assert.equal(0, v3[2]);
+            assert.equal(2, v1[0]);
+            assert.equal(3, v1[1]);
+            assert.equal(4, v1[2]);
+            assert.equal(2, v2[0]);
+            assert.equal(3, v2[1]);
+            assert.equal(4, v2[2]);
+        });
+
+        it('vec3.add()でベクトルの加算ができる。その際、元のベクトルは操作されない。', function () {
+            var v1 = vec3(2, 3, 4);
+            var v2 = vec3(2, 3, 4);
+            var v3 = vec3.add(v1, v2, vec3());
+            assert.equal(4, v3[0]);
+            assert.equal(6, v3[1]);
+            assert.equal(8, v3[2]);
+            assert.equal(2, v1[0]);
+            assert.equal(3, v1[1]);
+            assert.equal(4, v1[2]);
+            assert.equal(2, v2[0]);
+            assert.equal(3, v2[1]);
+            assert.equal(4, v2[2]);
+        });
     });
 
     describe('vec4テスト', function () {
