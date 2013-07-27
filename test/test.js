@@ -5,7 +5,7 @@
     describe('mat4テスト', function () {
         it('mat4()はidentity化された4x4行列を生成する', function () {
             var mat1 = mat4();
-            var mat2 = mat4.identity(mat4.create());
+            var mat2 = mat4();
             assert.equal(true, mat4.equal(mat1, mat2));
         });
 
@@ -54,42 +54,42 @@
     });
 
     describe('vec3テスト', function () {
-        it('vec3()は引数なしはすべて0で初期化される', function () {
+        it('vec3()ですべて0で初期化される', function () {
             var v = vec3();
             assert.equal(0, v[0]);
             assert.equal(0, v[1]);
             assert.equal(0, v[2]);
         });
 
-        it('vec3()は引数ひとつですべて同じ数字で初期化される', function () {
+        it('vec3(x)ですべて同じ数字で初期化される', function () {
             var v = vec3(2);
             assert.equal(2, v[0]);
             assert.equal(2, v[1]);
             assert.equal(2, v[2]);
         });
 
-        it('vec3()は引数ふたつでx, yをそれに、zを0で初期化する', function () {
+        it('vec3(x, y)でx, yをそれに、zを0で初期化する', function () {
             var v = vec3(2, 3);
             assert.equal(2, v[0]);
             assert.equal(3, v[1]);
             assert.equal(0, v[2]);
         });
 
-        it('vec3()は引数みっつでx, y, zをそれぞれその値で初期化する', function () {
+        it('vec3(x, y, z)でx, y, zをそれぞれその値で初期化する', function () {
             var v = vec3(2, 3, 4);
             assert.equal(2, v[0]);
             assert.equal(3, v[1]);
             assert.equal(4, v[2]);
         });
 
-        it('vec3()に配列を渡すとそれで初期化する', function () {
+        it('vec3([x, y, z])で渡した配列で初期化する', function () {
             var v = vec3([2, 3, 4]);
             assert.equal(2, v[0]);
             assert.equal(3, v[1]);
             assert.equal(4, v[2]);
         });
 
-        it('vec3.sub()でベクトルの減算ができる。その際、元のベクトルは操作されない。', function () {
+        it('vec3.sub(v1, v2, dest)でベクトルの減算ができる。その際、元のベクトルは操作されない。', function () {
             var v1 = vec3(2, 3, 4);
             var v2 = vec3(2, 3, 4);
             var v3 = vec3.sub(v1, v2, vec3());
@@ -104,7 +104,7 @@
             assert.equal(4, v2[2]);
         });
 
-        it('vec3.add()でベクトルの加算ができる。その際、元のベクトルは操作されない。', function () {
+        it('vec3.add(v1, v2, dest)でベクトルの加算ができる。その際、元のベクトルは操作されない。', function () {
             var v1 = vec3(2, 3, 4);
             var v2 = vec3(2, 3, 4);
             var v3 = vec3.add(v1, v2, vec3());
@@ -117,6 +117,45 @@
             assert.equal(2, v2[0]);
             assert.equal(3, v2[1]);
             assert.equal(4, v2[2]);
+        });
+
+        it('vec3.multiply(v1, v2, dest)でベクトルの掛け算ができる', function () {
+            var v1 = vec3(1, 2, 3);
+            var v2 = vec3(3, 4, 5);
+            var v3 = vec3.multiply(v1, v2, vec3());
+
+            assert.equal(1 * 3, v3[0]);
+            assert.equal(2 * 4, v3[1]);
+            assert.equal(3 * 5, v3[2]);
+        });
+
+        it('vec3.multiplyScalar(v, s, dest)でベクトルの掛け算ができる', function () {
+            var v1 = vec3(10, 15, 20);
+            var v2 = vec3.multiplyScalar(v1, 5, vec3());
+            assert.equal(10 * 5, v2[0]);
+            assert.equal(15 * 5, v2[1]);
+            assert.equal(20 * 5, v2[2]);
+        });
+
+        it('vec3.dot(v1, v2)でベクトルの内積を得る', function () {
+            var v1 = vec3(1, 2, 3);
+            var v2 = vec3(10, 11, 12);
+            var dot = vec3.dot(v1, v2);
+            assert.equal(1 * 10 + 2 * 11 + 3 * 12, dot);
+        });
+
+        0 && it('vec3.cross(v1, v2, dest)でベクトルの外積を得る', function () {
+            var v1 = vec3(1, 2, 3);
+            var v2 = vec3(10, 11, 12);
+            var v3 = vec3.cross(v1, v2, vec3());
+            assert.equal(11 * 3 - 2 * 12, v3[0]);
+            assert.equal(10 * 3 - 1 * 12, v3[1]);
+            assert.equal(10 * 2 - 1 * 11, v3[2]);
+        });
+
+        it('vec3.toString(v)でカンマ区切りの文字列に変換できる', function () {
+            var v = vec3(2, 3, 4);
+            assert.equal('2,3,4', vec3.toString(v));
         });
     });
 
