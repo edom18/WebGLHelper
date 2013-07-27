@@ -18,23 +18,32 @@
     var vs = $gl.createShader('vertex', v_shader);
     var fs = $gl.createShader('fragment', f_shader);
     var prg = $gl.createProgram(vs, fs);
-    var indecies = [
-        -0.5, -0.5, 0.0, //v0
-         0.0,  0.5, 0.0, //v1
-         0.5, -0.5, 0.0  //v2
+
+    var position = [
+        -1.0,  1.0, 0.0, //v0
+        -1.0, -1.0, 0.0, //v1
+         1.0, -1.0, 0.0, //v2
+         1.0,  1.0, 0.0  //v3
     ];
     var colors = [
         1.0, 0.0, 0.0, 1.0, //v0
         0.0, 1.0, 0.0, 1.0, //v1
-        0.0, 0.0, 1.0, 1.0  //v2
+        0.0, 0.0, 1.0, 1.0, //v2
+        1.0, 0.0, 0.0, 1.0  //v3
     ];
     var tex_coords = [
-            0.5, 1.0, //v0
-            0.0, 0.0, //v1
-            1.0, 1.0  //v2
-        ];
+        0.0, 0.0, //v0
+        0.0, 1.0, //v1
+        1.0, 1.0, //v2
+        1.0, 0.0  //v0
+    ];
 
-    var vbo = $gl.createBuffer('vbo', indecies);
+    var indecies = [
+        0, 1, 2, 0, 2, 3
+    ];
+
+    var vbo = $gl.createBuffer('vbo', position);
+    var ibo = $gl.createBuffer('ibo', indecies);
     var color_vbo = $gl.createBuffer('vbo', colors);
     var tex_coord_vbo = $gl.createBuffer('vbo', tex_coords);
 
@@ -88,6 +97,9 @@
         gl.bindBuffer(gl.ARRAY_BUFFER, tex_coord_vbo);
         gl.vertexAttribPointer(attLoc3, 2, gl.FLOAT, false, 0, 0);
 
+        //インデックスバッファをバインド
+        //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+
         //使用するテクスチャをバインド・有効化
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
@@ -100,7 +112,8 @@
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         //上記で設定された情報を使ってドロー
-        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        //gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawElements(gl.TRIANGLES, indecies.length, gl.UNSIGNED_SHORT, 0);
         gl.flush();
 
         //アニメーションを実行するためにループ呼び出し
