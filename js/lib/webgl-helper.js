@@ -2,7 +2,8 @@
 
     'use strict';
 
-    var gl;
+    var gl,
+        loading_image_queue = [];
 
     var WebGLHelper = {
 
@@ -146,6 +147,8 @@
 
         /**
          * Create a buffer.
+         * @param {string} type
+         * @param {Float32Array} data
          */
         createBuffer: function (type, data) {
             var buffer = gl.createBuffer();
@@ -160,6 +163,33 @@
             }
 
             return buffer;
+        },
+
+        /**
+         * Create a texture object.
+         * @param {string} url
+         * @return {WebGLTexture}
+         */
+        createTexture: function (url) {
+
+            var img     = new Image(),
+                texture = gl.createTexture();
+
+            loading_image_queue.push(img);
+
+            img.onload = function () {
+                loading_image_queue.splice(loading_image_queue.indexOf(img), 1);
+
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+                gl.generateMipmap(gl.TEXTURE_2D);
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            };
+            img.src = url;
+
+            return texture;
         }
     };
 
