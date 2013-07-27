@@ -168,7 +168,7 @@
             assert.equal(0, v[3]);
         });
 
-        it('vec4()は引数ひとつですべて同じ数字で初期化される', function () {
+        it('vec4(x)ですべて同じ数字で初期化される', function () {
             var v = vec4(2);
             assert.equal(2, v[0]);
             assert.equal(2, v[1]);
@@ -176,7 +176,7 @@
             assert.equal(2, v[3]);
         });
 
-        it('vec4()は引数ふたつでx, yをそれに、z, wを0で初期化する', function () {
+        it('vec4(x, y)でx, yをそれに、z, wを0で初期化する', function () {
             var v = vec4(2, 3);
             assert.equal(2, v[0]);
             assert.equal(3, v[1]);
@@ -184,7 +184,7 @@
             assert.equal(0, v[3]);
         });
 
-        it('vec4()は引数みっつでx, y, zをそれぞれその値で、wを0で初期化する', function () {
+        it('vec4(x, y, z)でx, y, zをそれぞれその値で、wを0で初期化する', function () {
             var v = vec4(2, 3, 4);
             assert.equal(2, v[0]);
             assert.equal(3, v[1]);
@@ -192,7 +192,7 @@
             assert.equal(0, v[3]);
         });
 
-        it('vec4()に配列を渡すとそれで初期化する', function () {
+        it('vec4([x, y, z, w])で渡した配列で初期化する', function () {
             var v = vec4([2, 3, 4, 5]);
             assert.equal(2, v[0]);
             assert.equal(3, v[1]);
