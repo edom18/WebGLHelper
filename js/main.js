@@ -61,8 +61,7 @@
     gl.enableVertexAttribArray(attLoc3);
 
     var angle = 0;
-    //ビュー座標変換マトリクスの生成
-    var viewMatrix = mat4.lookAt(vec3(0, 0, 10), vec3(0, 0, 0), vec3(0, 1, 0), mat4());
+    var z = 10;
 
     //プロジェクション変換マトリクスの生成
     var projMatrix = mat4.perspective(60, w / h, 1, 100, mat4());
@@ -75,8 +74,12 @@
         //最終的に使用されるMVP用マトリクスを生成
         var mvpMatrix   = mat4();
 
+        //ビュー座標変換マトリクスの生成
+        var viewMatrix = mat4.lookAt(vec3(0, 0, z), vec3(0, 0, 0), vec3(0, 1, 0), mat4());
+
         angle = (angle + 1) % 360;
         mat4.rotate(modelMatrix, angle, vec3(0, 1, 0), modelMatrix);
+        mat4.scale(modelMatrix, vec3(5, 5, 5), modelMatrix);
         mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
         mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
 
@@ -117,7 +120,15 @@
         gl.flush();
 
         //アニメーションを実行するためにループ呼び出し
-        requestAnimationFrame(loop);
+        requestAnimFrame(loop);
     }());
+
+    doc.addEventListener('mousewheel', function (e) {
+        z += e.wheelDelta / 100;
+    }, false);
+
+    doc.addEventListener('DOMMouseScroll', function (e) {
+        z += e.detail / 10;
+    }, false);
 
 }(window, document));
