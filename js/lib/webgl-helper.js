@@ -193,6 +193,23 @@
         }
     };
 
-    window.WebGLHelper = window.$gl = WebGLHelper;
+    var requestAnimFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.msRequestAnimationFrame ||
+                           function (func) {
+                               return setTimeout(func, 16);
+                           };
+
+    var cancelAnimFrame = win.cancelAnimationFrame || win.mozCancelAnimationFrame || win.msCancelAnimationFrame ||
+                          function (id) {
+                              clearTimeout(id);
+                          };
+                        
+
+
+    /*! -----------------------------------------------------------------
+        EXPORTS.
+    --------------------------------------------------------------------- */
+    exports.requestAnimFrame = requestAnimFrame;
+    exports.cancelAnimFrame  = cancelAnimFrame;
+    exports.WebGLHelper      = exports.$gl = WebGLHelper;
 
 }(window, document, window));
