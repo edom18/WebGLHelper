@@ -51,6 +51,33 @@
             assert.equal((4 * 90  + 8 * 100 + 12 * 110 + 16 * 120), mat3[11]);
             assert.equal((4 * 130 + 8 * 140 + 12 * 150 + 16 * 160), mat3[15]);
         });
+
+        it('mat4.transpose(mat)で行列を転置行列に変換できる', function () {
+            var mat = mat4([
+                1, 2, 3, 4,
+                5, 6, 7, 8,
+                9, 10, 11, 12,
+                13, 14, 15, 16
+            ]);
+            mat4.transpose(mat);
+
+            assert.equal(1, mat[0]);
+            assert.equal(5, mat[1]);
+            assert.equal(9, mat[2]);
+            assert.equal(13, mat[3]);
+            assert.equal(2, mat[4]);
+            assert.equal(6, mat[5]);
+            assert.equal(10, mat[6]);
+            assert.equal(14, mat[7]);
+            assert.equal(3, mat[8]);
+            assert.equal(7, mat[9]);
+            assert.equal(11, mat[10]);
+            assert.equal(15, mat[11]);
+            assert.equal(4, mat[12]);
+            assert.equal(8, mat[13]);
+            assert.equal(12, mat[14]);
+            assert.equal(16, mat[15]);
+        });
     });
 
     describe('vec3テスト', function () {
