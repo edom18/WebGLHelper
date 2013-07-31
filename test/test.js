@@ -9,13 +9,37 @@
             assert.equal(true, mat4.equal(mat1, mat2));
         });
 
-        it('copy()で行列をコピーできる', function () {
+        it('mat4.copy(mat[, dest])で行列をコピーできる', function () {
             var mat1 = mat4();
             var mat2 = mat4();
             mat4.translate(mat1, vec3(10, 10, 10), mat1);
             mat4.copy(mat1, mat2);
             assert.equal(true, mat4.equal(mat1, mat2));
             assert.equal(true, mat1 !== mat2);
+        });
+
+        it('mat4.equal(mat1, mat2)で行列の内容が等しいかチェックできる', function () {
+            var m1 = mat4([
+                1, 2, 3, 4,
+                5, 6, 7, 8,
+                9, 10, 11, 12,
+                13, 14, 15, 16
+            ]);
+            var m2 = mat4([
+                11, 12, 13, 14,
+                15, 16, 17, 18,
+                19, 20, 21, 22,
+                23, 24, 25, 26
+            ]);
+            var m3 = mat4([
+                1, 2, 3, 4,
+                5, 6, 7, 8,
+                9, 10, 11, 12,
+                13, 14, 15, 16
+            ]);
+
+            assert.equal(true, mat4.equal(m1, m3));
+            assert.equal(false, mat4.equal(m1, m2));
         });
 
         it('multiplyで行列の掛け算ができる', function () {
@@ -77,6 +101,25 @@
             assert.equal(8, mat[13]);
             assert.equal(12, mat[14]);
             assert.equal(16, mat[15]);
+        });
+
+        0 && it('mat4.inverse(mat[, dest])で逆行列を求めることができる', function () {
+            var m1 = mat4([
+                51, 2, 9, 4,
+                35, 16, 37, 48,
+                19, 20, 21, 82,
+                13, 18, 25, 96
+            ]);
+            var m2 = mat4([
+                11, 12, 13, 14,
+                15, 16, 17, 18,
+                19, 20, 21, 22,
+                23, 24, 25, 26
+            ]);
+            var m3 = mat4.inverse(m1);
+            var m4 = mat4.inverse2(m1);
+
+            assert.equal(true, mat4.equal(m3, m4));
         });
     });
 
