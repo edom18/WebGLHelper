@@ -77,6 +77,8 @@
      */
     mat4.getInvert = function(mat, dest) {
 
+        dest || (dest = mat4());
+
         var a11, a12, a13, a14, a21, a22, a23, a24, a31, a32, a33, a34, a41, a42, a43, a44,
             b11, b12, b13, b14, b21, b22, b23, b24, b31, b32, b33, b34, b41, b42, b43, b44,
             det;
@@ -135,10 +137,14 @@
      * @param {Float32Array} dest
      */
     mat4.copy = function(mat, dest) {
+
+        dest || (dest = mat4());
+
         dest[0] = mat[0]; dest[4] = mat[4]; dest[8] = mat[8]; dest[12] = mat[12];
         dest[1] = mat[1]; dest[5] = mat[5]; dest[9] = mat[9]; dest[13] = mat[13];
         dest[2] = mat[2]; dest[6] = mat[6]; dest[10] = mat[10]; dest[14] = mat[14];
         dest[3] = mat[3]; dest[7] = mat[7]; dest[11] = mat[11]; dest[15] = mat[15];
+
         return dest;
     };
 
@@ -155,6 +161,7 @@
     mat4.makeFrustum = function(left, right, bottom, top, near, far, dest) {
 
         var a, b, c, d, vh, vw, x, y;
+        dest || (dest = mat4());
 
         vw = right - left;
         vh = top - bottom;
@@ -182,7 +189,9 @@
      * @param {number} far
      */
     mat4.perspective = function(fov, aspect, near, far, dest) {
+
         var xmax, xmin, ymax, ymin;
+        dest || (dest = mat4());
 
         ymax = near * tan(fov * DEG_TO_RAD * 0.5);
         ymin = -ymax;
@@ -203,6 +212,8 @@
         var A11, A12, A13, A14, A21, A22, A23, A24, A31, A32, A33, A34, A41, A42, A43, A44,
             B11, B12, B13, B14, B21, B22, B23, B24, B31, B32, B33, B34, B41, B42, B43, B44,
             ae, be;
+
+        dest || (dest = mat4());
 
         ae = A;
         be = B;
@@ -248,6 +259,8 @@
             y = v[1],
             z = v[2];
 
+        dest || (dest = mat4());
+
         dest[0]  = mat[0]; dest[1] = mat[1]; dest[2]  = mat[2];  dest[3]  = mat[3];
         dest[4]  = mat[4]; dest[5] = mat[5]; dest[6]  = mat[6];  dest[7]  = mat[7];
         dest[8]  = mat[8]; dest[9] = mat[9]; dest[10] = mat[10]; dest[11] = mat[11];
@@ -270,6 +283,8 @@
         var x = v[0],
             y = v[1],
             z = v[2];
+
+        dest || (dest = mat4());
 
         dest[0]  = mat[0]  * x;
         dest[1]  = mat[1]  * x;
@@ -301,6 +316,8 @@
 
         var x = axis[0], y = axis[1], z = axis[2],
             sq = sqrt(x * x + y * y + z * z);
+
+        dest || (dest = mat4());
 
         if(!sq){
             return null;
@@ -350,6 +367,8 @@
             y = vec3(),
             z = vec3(),
             tx, ty, tz;
+
+        dest || (dest = mat4());
 
         vec3.normalize(vec3.sub(eye, target, z));
         vec3.normalize(vec3.cross(z, up, x));
