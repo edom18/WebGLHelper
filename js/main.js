@@ -91,24 +91,21 @@
         $gl.setupBuffer({
             buffer: vbo,
             index: attLoc,
-            size: 3,
-            type: $gl.ARRAY_BUFFER
+            size: 3
         }); 
 
         //頂点色バッファをバインド
         $gl.setupBuffer({
             buffer: color_vbo,
             index: attLoc2,
-            size: 4,
-            type: $gl.ARRAY_BUFFER
+            size: 4
         });
 
         //頂点テクスチャ座標バッファをバインド
         $gl.setupBuffer({
             buffer: tex_coord_vbo,
             index: attLoc3,
-            size: 2,
-            type: $gl.ARRAY_BUFFER
+            size: 2
         });
 
         //インデックスバッファをバインド
