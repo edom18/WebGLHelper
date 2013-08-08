@@ -195,6 +195,10 @@
             return buffer;
         },
 
+        /**
+         * Set up a buffer.
+         * @param {Object} args
+         */
         setupBuffer: function (args) {
             var buffer = args.buffer,
                 index  = args.index,
@@ -205,6 +209,13 @@
             gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
             gl.enableVertexAttribArray(index);
             gl.vertexAttribPointer(index, size, gl.FLOAT, false, stride, offset);
+        },
+
+        /**
+         * Set up an index buffer.
+         */
+        setupIndex: function (indexBuffer) {
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
         },
 
         /**
