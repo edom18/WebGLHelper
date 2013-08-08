@@ -11,6 +11,9 @@
         VERTEX_SHADER: 0,
         FRAGMENT_SHADER: 1,
 
+        ARRAY_BUFFER: 0,
+        ELEMENT_ARRAY_BUFFER: 1,
+
         //Class method.
         degToRad: function() {
             var factor = Math.PI / 180;
@@ -180,11 +183,11 @@
         createBuffer: function (type, data) {
             var buffer = gl.createBuffer();
 
-            if (type === 'vbo') {
+            if (type === this.ARRAY_BUFFER) {
                 gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
                 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
             }
-            else if (type === 'ibo') {
+            else if (type === this.ELEMENT_ARRAY_BUFFER) {
                 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
                 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(data), gl.STATIC_DRAW);
             }
