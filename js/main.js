@@ -41,10 +41,10 @@
         0, 1, 2, 0, 2, 3
     ];
 
-    var vbo = $gl.createBuffer('vbo', position);
-    var ibo = $gl.createBuffer('ibo', indecies);
-    var color_vbo = $gl.createBuffer('vbo', colors);
-    var tex_coord_vbo = $gl.createBuffer('vbo', tex_coords);
+    var vbo = $gl.createBuffer($gl.ARRAY_BUFFER, position);
+    var ibo = $gl.createBuffer($gl.ELEMENT_ARRAY_BUFFER, indecies);
+    var color_vbo = $gl.createBuffer($gl.ARRAY_BUFFER, colors);
+    var tex_coord_vbo = $gl.createBuffer($gl.ARRAY_BUFFER, tex_coords);
 
     var texture = $gl.createTexture('img/logo.jpg');
 
