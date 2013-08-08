@@ -11,6 +11,14 @@
         VERTEX_SHADER: 0,
         FRAGMENT_SHADER: 1,
 
+        //Class method.
+        degToRad: function (degrees) {
+            return degrees * Math.PI / 180;
+        },
+        radToDeg: function (rad) {
+            return rad * 180 / Math.PI;
+        },
+
         /**
          * Set parameters to the gl viewport.
          * @param {number} x
