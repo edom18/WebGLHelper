@@ -11,9 +11,6 @@
         VERTEX_SHADER: 0,
         FRAGMENT_SHADER: 1,
 
-        ARRAY_BUFFER: 0,
-        ELEMENT_ARRAY_BUFFER: 1,
-
         //Class method.
         degToRad: function() {
             var factor = Math.PI / 180;
@@ -198,12 +195,11 @@
         setupBuffer: function (args) {
             var buffer = args.buffer,
                 index  = args.index,
-                type   = (args.type === this.ARRAY_BUFFER) ? gl.ARRAY_BUFFER : gl.ELEMENT_ARRAY_BUFFER,
                 size   = args.size,
                 stride = args.stride || 0,
                 offset = args.offset || 0;
 
-            gl.bindBuffer(type, buffer);
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
             gl.enableVertexAttribArray(index);
             gl.vertexAttribPointer(index, size, gl.FLOAT, false, stride, offset);
         },
