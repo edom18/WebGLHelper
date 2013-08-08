@@ -7,6 +7,10 @@
 
     var WebGLHelper = {
 
+        //const variables.
+        VERTEX_SHADER: 0,
+        FRAGMENT_SHADER: 1,
+
         /**
          * Set parameters to the gl viewport.
          * @param {number} x
@@ -104,10 +108,10 @@
 
             var shader;
 
-            if (type === 'vertex') {
+            if (type === this.VERTEX_SHADER) {
                 shader = gl.createShader(gl.VERTEX_SHADER);
             }
-            else if (type === 'fragment') {
+            else if (type === this.FRAGMENT_SHADER) {
                 shader = gl.createShader(gl.FRAGMENT_SHADER);
             }
 
@@ -190,6 +194,24 @@
             img.src = url;
 
             return texture;
+        },
+
+        /**
+         * Create a material with shader.
+         * @param {Object} args
+         * @return {Object}
+         */
+        createProgramWithShader: function (args) {
+
+            if (!util.isObject(args)) {
+                throw new Error('An argument must be like Object.'); 
+            }
+
+            var vs  = this.createShader(this.VERTEX_SHADER, args.vertexShader);
+            var fs  = this.createShader(this.FRAGMENT_SHADER, args.fragmentShader);
+            var prg = this.createProgram(vs, fs);
+
+            return prg;
         }
     };
 
@@ -202,8 +224,6 @@
                           function (id) {
                               clearTimeout(id);
                           };
-                        
-
 
     /*! -----------------------------------------------------------------
         EXPORTS.
