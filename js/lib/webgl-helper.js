@@ -11,13 +11,23 @@
         VERTEX_SHADER: 0,
         FRAGMENT_SHADER: 1,
 
+        ARRAY_BUFFER: 0,
+        ELEMENT_ARRAY_BUFFER: 1,
+
         //Class method.
-        degToRad: function (degrees) {
-            return degrees * Math.PI / 180;
-        },
-        radToDeg: function (rad) {
-            return rad * 180 / Math.PI;
-        },
+        degToRad: function() {
+            var factor = Math.PI / 180;
+            return function (degrees) {
+                return degrees * factor;
+            };
+        }(),
+
+        radToDeg: function() {
+            var factor = 180 / Math.PI;
+            return function (rad) {
+                return rad * factor;
+            };
+        }(),
 
         /**
          * Set parameters to the gl viewport.
@@ -39,6 +49,14 @@
          */
         setClearColor: function (r, g, b, a) {
             gl.clearColor(r, g, b, a);
+        },
+
+        /**
+         * Set clear depth.
+         * @param {number} depth
+         */
+        setClearDepth: function (depth) {
+            gl.clearDepth(depth);
         },
 
         /**
@@ -175,6 +193,19 @@
             }
 
             return buffer;
+        },
+
+        setupBuffer: function (args) {
+            var buffer = args.buffer,
+                index  = args.index,
+                type   = (args.type === this.ARRAY_BUFFER) ? gl.ARRAY_BUFFER : gl.ELEMENT_ARRAY_BUFFER,
+                size   = args.size,
+                stride = args.stride || 0,
+                offset = args.offset || 0;
+
+            gl.bindBuffer(type, buffer);
+            gl.enableVertexAttribArray(index);
+            gl.vertexAttribPointer(index, size, gl.FLOAT, false, stride, offset);
         },
 
         /**
