@@ -88,16 +88,28 @@
          * ---------------------------------------------------------------------------------- */
 
         //頂点位置バッファをバインド
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
-        gl.vertexAttribPointer(attLoc, 3, gl.FLOAT, false, 0, 0);
+        $gl.setupBuffer({
+            buffer: vbo,
+            index: attLoc,
+            size: 3,
+            type: $gl.ARRAY_BUFFER
+        }); 
 
         //頂点色バッファをバインド
-        gl.bindBuffer(gl.ARRAY_BUFFER, color_vbo);
-        gl.vertexAttribPointer(attLoc2, 4, gl.FLOAT, false, 0, 0);
+        $gl.setupBuffer({
+            buffer: color_vbo,
+            index: attLoc2,
+            size: 4,
+            type: $gl.ARRAY_BUFFER
+        });
 
         //頂点テクスチャ座標バッファをバインド
-        gl.bindBuffer(gl.ARRAY_BUFFER, tex_coord_vbo);
-        gl.vertexAttribPointer(attLoc3, 2, gl.FLOAT, false, 0, 0);
+        $gl.setupBuffer({
+            buffer: tex_coord_vbo,
+            index: attLoc3,
+            size: 2,
+            type: $gl.ARRAY_BUFFER
+        });
 
         //インデックスバッファをバインド
         //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
