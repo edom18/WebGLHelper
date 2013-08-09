@@ -198,7 +198,7 @@
      * @param {Float32Array} dest
      * @return {Float32Array}
      */
-    quat.inverse = function (qt, deset) {
+    quat.inverse = function (qt, dest) {
 
         dest || (dest = quat());
 
