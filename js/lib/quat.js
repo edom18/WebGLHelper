@@ -17,8 +17,42 @@
      *   = [ cos(θ/2) (sin(θ/2)nx sin(θ/2)ny sin(θ/2)nz ] //ベクトル成分を分解して表記
      */
     function quat(w, x, y, z) {
-        return vec4.call(null, arguments);
+        return quat.create(w, x, y, z);
     }
+
+    /**
+     * Create a quaternion.
+     * @param {number} w Component of w.
+     * @param {number} x Component of x.
+     * @param {number} y Component of y.
+     * @param {number} z Component of z.
+     * @return {Float32Array}
+     */
+    quat.create = function (w, x, y, z) {
+
+        var elements = [];
+
+        if (Array.isArray(x)) {
+            elements = x;
+        }
+        else if (w === undefined) {
+            elements = [1, 0, 0, 0];
+        }
+        else if (x === undefined) {
+            elements = [w, w, w, w];
+        }
+        else if (y === undefined) {
+            elements = [w, x, 0, 0];
+        }
+        else if (z === undefined) {
+            elements = [w, x, y, 0];
+        }
+        else {
+            elements = [w, x, y, z];
+        }
+
+        return new Float32Array(elements);
+    };
 
     /**
      * convert quatuernion to matrix4.
@@ -75,6 +109,34 @@
     };
 
     /**
+     * Convert quaternion to a vec3.
+     * @param {Float32Array} vec as vec3
+     * @param {Float32Array} qt as quaternion
+     * @param {Float32Array} dest as vec3
+     * @return {Float32Array} dest
+     */
+    quat.toVec3 = function (vec, qt, dest) {
+        var qp = quat();
+        var qq = quat();
+        var qr = quat();
+
+        quat.inverse(qt, qr);
+
+        qp[0] = vec[0];
+        qp[1] = vec[1];
+        qp[2] = vec[2];
+
+        quat.multiply(qr, qp, qq);
+        quat.multiply(qq, qt, qr);
+
+        dest[0] = qr[0];
+        dest[1] = qr[1];
+        dest[2] = qr[2];
+
+        return dest;
+    };
+
+    /**
      * Multiply quaternions.
      *
      *  quatの掛け算の公式は以下。
@@ -126,6 +188,24 @@
         dest[1] = s * vec[0];
         dest[2] = s * vec[1];
         dest[3] = s * vec[2];
+
+        return dest;
+    };
+
+    /**
+     * Inverse quaternion.
+     * @param {Float32Array} qt
+     * @param {Float32Array} dest
+     * @return {Float32Array}
+     */
+    quat.inverse = function (qt, deset) {
+
+        dest || (dest = quat());
+
+        dest[0] = -qt[0];
+        dest[1] = -qt[1];
+        dest[2] = -qt[2];
+        dest[3] =  qt[3];
 
         return dest;
     };
