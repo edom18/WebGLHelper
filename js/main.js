@@ -77,7 +77,11 @@
         var viewMatrix = mat4.lookAt(vec3(0, 0, z), vec3(0, 0, 0), vec3(0, 1, 0), mat4());
 
         angle = (angle + 1) % 360;
-        mat4.rotate(modelMatrix, angle, vec3(0, 1, 0), modelMatrix);
+        var qt = quat.rotate(angle * Math.PI / 180, vec3(0, 1, 0));
+        var qt2 = quat.rotate(angle * Math.PI / 180, vec3(1, 0, 0));
+        quat.multiply(qt, qt2, qt);
+        quat.toMat(qt, modelMatrix);
+        //mat4.rotate(modelMatrix, angle, vec3(0, 1, 0), modelMatrix);
         mat4.scale(modelMatrix, vec3(5, 5, 5), modelMatrix);
         mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
         mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
