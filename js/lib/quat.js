@@ -202,10 +202,10 @@
 
         dest || (dest = quat());
 
-        dest[0] = -qt[0];
+        dest[0] =  qt[0];
         dest[1] = -qt[1];
         dest[2] = -qt[2];
-        dest[3] =  qt[3];
+        dest[3] = -qt[3];
 
         return dest;
     };
