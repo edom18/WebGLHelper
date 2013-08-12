@@ -48,22 +48,28 @@
 
     var texture = $gl.createTexture('img/logo.jpg');
 
-    var attLoc = gl.getAttribLocation(prg, 'a_position');
-    var attLoc2 = gl.getAttribLocation(prg, 'a_color');
-    var attLoc3 = gl.getAttribLocation(prg, 'a_texCoord');
+    var attLoc = [
+        gl.getAttribLocation(prg, 'a_position'),
+        gl.getAttribLocation(prg, 'a_color'),
+        gl.getAttribLocation(prg, 'a_texCoord')
+    ];
 
-    var uniLoc = gl.getUniformLocation(prg, 'u_mvpMatrix');
-    var uniLoc2 = gl.getUniformLocation(prg, 'u_texture');
+    var uniLoc = [
+        gl.getUniformLocation(prg, 'u_mvpMatrix'),
+        gl.getUniformLocation(prg, 'u_texture'),
+        gl.getUniformLocation(prg, 'u_useTexture')
+    ];
 
-    gl.enableVertexAttribArray(attLoc);
-    gl.enableVertexAttribArray(attLoc2);
-    gl.enableVertexAttribArray(attLoc3);
+    gl.enableVertexAttribArray(attLoc[0]);
+    gl.enableVertexAttribArray(attLoc[1]);
+    gl.enableVertexAttribArray(attLoc[2]);
 
     var angle = 0;
     var z = 10;
 
     //プロジェクション変換マトリクスの生成
     var projMatrix = mat4.perspective(60, w / h, 1, 100, mat4());
+    var useTexture = true;
 
     (function loop() {
 
@@ -71,17 +77,21 @@
         var modelMatrix = mat4();
 
         //最終的に使用されるMVP用マトリクスを生成
-        var mvpMatrix   = mat4();
+        var mvpMatrix = mat4();
 
         //ビュー座標変換マトリクスの生成
-        var viewMatrix = mat4.lookAt(vec3(0, 0, z), vec3(0, 0, 0), vec3(0, 1, 0), mat4());
+        var viewMatrix = mat4.lookAt(vec3(0, 0, z), vec3(0, 0, 0), vec3(0, 1, 0));
 
         angle = (angle + 1) % 360;
-        var qt = quat.rotate(angle * Math.PI / 180, vec3(0, 1, 0));
-        var qt2 = quat.rotate(angle * Math.PI / 180, vec3(1, 0, 0));
+
+        //モデル回転用クォータニオンを作成
+        var qt  = quat.rotate($gl.degToRad(angle), vec3(0, 1, 0));
+        var qt2 = quat.rotate($gl.degToRad(angle), vec3(1, 0, 0));
+
+        //クォータニオンを使って回転
         quat.multiply(qt, qt2, qt);
         quat.toMat(qt, modelMatrix);
-        //mat4.rotate(modelMatrix, angle, vec3(0, 1, 0), modelMatrix);
+
         mat4.scale(modelMatrix, vec3(5, 5, 5), modelMatrix);
         mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
         mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
@@ -94,34 +104,37 @@
         //頂点位置バッファをバインド
         $gl.setupBuffer({
             buffer: vbo,
-            index: attLoc,
+            index: attLoc[0],
             size: 3
         }); 
 
         //頂点色バッファをバインド
         $gl.setupBuffer({
             buffer: color_vbo,
-            index: attLoc2,
+            index: attLoc[1],
             size: 4
         });
 
         //頂点テクスチャ座標バッファをバインド
         $gl.setupBuffer({
             buffer: tex_coord_vbo,
-            index: attLoc3,
+            index: attLoc[2],
             size: 2
         });
 
         //インデックスバッファをバインド
-        //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
 
         //使用するテクスチャをバインド・有効化
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.uniform1i(uniLoc2, texture);
+        gl.uniform1i(uniLoc[1], texture);
+
+        //テクスチャを使うかどうか
+        gl.uniform1i(uniLoc[2], useTexture);
 
         //最終的なMVPマトリクスをアップロード
-        gl.uniformMatrix4fv(uniLoc, false, mvpMatrix);
+        gl.uniformMatrix4fv(uniLoc[0], false, mvpMatrix);
 
         //色をクリア
         gl.clear(gl.COLOR_BUFFER_BIT);
