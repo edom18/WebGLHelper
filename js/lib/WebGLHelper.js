@@ -196,6 +196,60 @@
         },
 
         /**
+         * Set up frame buffer for off screen rendering.
+         * @param {number} width
+         * @param {number} height
+         * @return {Object}
+         */
+        setupFrameBuffer: function (width, height) {
+
+            //フレームバッファの生成
+            var framebuffer = gl.createFramebuffer();
+
+            //フレームバッファをWebGLにバインド
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+            //深度バッファ用レンダーバッファを生成とバインド
+            var renderbuffer = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
+
+            //レンダーバッファを深度バッファとして設定
+            gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
+
+            //フレームバッファにデプスバッファをアタッチ
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
+
+            //フレームバッファ用テクスチャの生成とバインド
+            var texture = gl.createTexture();
+            gl.bindTexture(gl.TEXTURE_2D, texture);
+
+            //[Interface]
+            //void texImage2D(GLenum target, GLint level, GLenum internalformat,
+            //  GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, ArrayBufferView? pixels);
+            //フレームバッファ用のテクスチャにカラー用のメモリ領域を確保
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+
+            //テクスチャパラメータ
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+            //フレームバッファにテクスチャをアタッチ
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+            //各種オブジェクトのバインドを解除
+            gl.bindTexture(gl.TEXTURE_2D, null);
+            gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+            return {
+                framebuffer: framebuffer,
+                renderbuffer: renderbuffer,
+                texture: texture
+            };
+        },
+
+
+        /**
          * Set up a buffer.
          * @param {Object} args
          */
@@ -234,6 +288,10 @@
                 loading_image_queue.splice(loading_image_queue.indexOf(img), 1);
 
                 gl.bindTexture(gl.TEXTURE_2D, texture);
+
+                //[Interface]
+                //void texImage2D(GLenum target, GLint level, GLenum internalformat,
+                //  GLenum format, GLenum type, ImageData? pixels);
                 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
