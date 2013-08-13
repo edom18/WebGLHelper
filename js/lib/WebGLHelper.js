@@ -279,7 +279,7 @@
          * @param {string} url
          * @return {WebGLTexture}
          */
-        createTexture: function (url) {
+        setupTexture: function (url) {
 
             var img     = new Image(),
                 texture = gl.createTexture();
