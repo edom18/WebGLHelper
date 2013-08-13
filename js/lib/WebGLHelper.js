@@ -310,7 +310,7 @@
          * @param {Object} args
          * @return {Object}
          */
-        createProgramWithShader: function (args) {
+        setupProgram: function (args) {
 
             if (!util.isObject(args)) {
                 throw new Error('An argument must be like Object.'); 
