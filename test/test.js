@@ -2,6 +2,48 @@
 
     var assert = require("assert");
 
+    describe('quatテスト', function () {
+        it('quat()はidentity化された4要素の配列を生成する', function () {
+            var qt = quat();
+            assert.equal(qt[0], 1);
+            assert.equal(qt[1], 0);
+            assert.equal(qt[2], 0);
+            assert.equal(qt[3], 0);
+        });
+
+        it('quat(w)はすべてwで初期化された4要素の配列を返す', function () {
+            var qt = quat(2);
+            assert.equal(qt[0], 2);
+            assert.equal(qt[1], 2);
+            assert.equal(qt[2], 2);
+            assert.equal(qt[3], 2);
+        });
+
+        it('quat(w, x)はw,x,0,0で初期化された4要素の配列を返す', function () {
+            var qt = quat(3, 4);
+            assert.equal(qt[0], 3);
+            assert.equal(qt[1], 4);
+            assert.equal(qt[2], 0);
+            assert.equal(qt[3], 0);
+        });
+
+        it('quat(w, x, y)はw,x,y,0で初期化された4要素の配列を返す', function () {
+            var qt = quat(5, 6, 7);
+            assert.equal(qt[0], 5);
+            assert.equal(qt[1], 6);
+            assert.equal(qt[2], 7);
+            assert.equal(qt[3], 0);
+        });
+
+        it('quat(w, x, y, z)はw,x,y,zで初期化された4要素の配列を返す', function () {
+            var qt = quat(8, 9, 10, 11);
+            assert.equal(qt[0], 8);
+            assert.equal(qt[1], 9);
+            assert.equal(qt[2], 10);
+            assert.equal(qt[3], 11);
+        });
+    });
+
     describe('mat4テスト', function () {
         it('mat4()はidentity化された4x4行列を生成する', function () {
             var mat1 = mat4();
