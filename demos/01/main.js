@@ -13,7 +13,7 @@
     $gl.setViewport(0, 0, w, h);
     $gl.setClearColor(0.0, 0.0, 0.0, 1.0);
 
-    var prg = $gl.createProgramWithShader({
+    var prg = $gl.setupProgram({
         vertexShader: $gl.getShaderSourceFromDOM('vs'),
         fragmentShader: $gl.getShaderSourceFromDOM('fs') 
     });

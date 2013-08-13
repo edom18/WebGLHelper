@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>WebGL test</title>
+<style type="text/css">
+    html {
+        overflow: hidden;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<script id="vs" type="x-shader/x-vertex">
+    attribute vec3 position;
+    attribute vec3 normal;
+    attribute vec4 color;
+
+    uniform mat4 mMatrix;
+    uniform mat4 tMatrix;
+    uniform mat4 mvpMatrix;
+
+    varying vec3 vPosition;
+    varying vec3 vNormal;
+    varying vec4 vColor;
+    varying vec4 vTexCoord;
+
+    void main(void) {
+        vPosition = (mMatrix * vec4(position, 1.0)).xyz;
+        vNormal   = normal;
+        vColor    = color;
+        vTexCoord = tMatrix * vec4(vPosition, 1.0);
+        gl_Position = mvpMatrix * vec4(position, 1.0);
+    }
+</script>
+<script id="fs" type="x-shader/x-fragument">
+    percision mediump float;
+
+    uniform mat4 invMatrix;
+    uniform vec3 lightPosition;
+    uniform sampler2D texture;
+
+    varying vec3 vPosition;
+    varying vec3 vNormal;
+    varying vec4 vColor;
+    varying vec4 vTexCoord;
+
+    void main(void) {
+        vec3 light = lightPosition - vPosition;
+        vec3 invLight = normalize(invMatrix * vec4(light, 0.0)).xyz;
+        float diffuse = clamp(dot(vNormal, invLight), 0.1, 1.0);
+        vec4 smpColor = texture2DProj(texture, vTexCoord);
+        gl_FragColor  = vColor * vec4(vec3(diffuse), 1.0) * smpColor;
+    }
+</script>
+</head>
+<body>
+    <canvas id="cv"></canvas>
+    <input type="range" id="range" />
+    <script src="../../js/lib/util.js"></script>
+    <script src="../../js/lib/vec3.js"></script>
+    <script src="../../js/lib/vec4.js"></script>
+    <script src="../../js/lib/mat4.js"></script>
+    <script src="../../js/lib/quat.js"></script>
+    <script src="../../js/lib/WebGLHelper.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
