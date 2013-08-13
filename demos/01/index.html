@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>WebGL test</title>
+<style type="text/css">
+    html {
+        overflow: hidden;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+<script id="vs" type="x-shader/x-vertex">
+    attribute vec3 a_position;
+    attribute vec3 a_normal;
+    attribute vec4 a_color;
+    attribute vec2 a_texCoord;
+
+    uniform mat4 u_mvpMatrix;
+
+    varying vec4 v_color;
+    varying vec2 v_texCoord;
+
+    void main() {
+        v_color = a_color;
+        v_texCoord = a_texCoord;
+        gl_Position = u_mvpMatrix * vec4(a_position, 1.0);
+    }
+</script>
+<script id="fs" type="x-shader/x-fragument">
+    precision mediump float;
+
+    uniform sampler2D u_texture;
+    uniform bool u_useTexture;
+
+    varying vec4 v_color;
+    varying vec2 v_texCoord;
+
+    void main() {
+        if (u_useTexture == true) {
+            gl_FragColor = texture2D(u_texture, v_texCoord);
+        }
+        else {
+            gl_FragColor = v_color;
+        }
+    }
+</script>
+</head>
+<body>
+    <canvas id="cv"></canvas>
+    <script src="../../js/lib/util.js"></script>
+    <script src="../../js/lib/vec3.js"></script>
+    <script src="../../js/lib/vec4.js"></script>
+    <script src="../../js/lib/mat4.js"></script>
+    <script src="../../js/lib/quat.js"></script>
+    <script src="../../js/lib/WebGLHelper.js"></script>
+    <script src="../../js/main.js"></script>
+</body>
+</html>
