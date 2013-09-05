@@ -13,8 +13,8 @@
      * @param {number} z Component of z.
      *
      * quatの中の数値の意味は以下。
-     * q = [ cos(θ/2) sin(θ/2)n ] //nはベクトル
-     *   = [ cos(θ/2) (sin(θ/2)nx sin(θ/2)ny sin(θ/2)nz ] //ベクトル成分を分解して表記
+     * q = [ cos(θ/2); sin(θ/2)n ] //nはベクトル。「;」の左が実部、右が虚部。
+     *   = [ cos(θ/2); (sin(θ/2)nx, sin(θ/2)ny, sin(θ/2)nz ] //ベクトル成分を分解して表記
      */
     function quat(w, x, y, z) {
         return quat.create(w, x, y, z);
