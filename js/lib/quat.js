@@ -141,10 +141,10 @@
      *
      *  quatの掛け算の公式は以下。
      *  ・は内積、×は外積、U, Vはともにベクトル。
-     *  ;の左が実部、右が虚部。基本的に実部は`0`で計算。
+     *  ;の左が実部、右が虚部。
      *  A = (a; U) 
      *  B = (b; V) 
-     *  AB = (ab - U・V; aV + bU + V×U)
+     *  AB = (ab - U・V; aV + bU + U×V)
      */
     quat.multiply = function (pq, qq, dest) {
         
