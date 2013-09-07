@@ -2,8 +2,10 @@
 
     'use strict';
 
-    var sin = Math.sin,
-        cos = Math.cos;
+    var sin  = Math.sin,
+        cos  = Math.cos,
+        acos = Math.acos,
+        sqrt = Math.sqrt;
 
     /**
      * Make rotation quat
@@ -206,6 +208,42 @@
         dest[1] = -qt[1];
         dest[2] = -qt[2];
         dest[3] = -qt[3];
+
+        return dest;
+    };
+
+    /**
+     * @param {Float32Array} q1
+     * @param {Float32Array} q2
+     * @param {number} time
+     * @param {Float32Array} dest
+     * @return {Float32Array}
+     */
+    quat.slerp = function (q1, q2, time, dest) {
+
+        dest || (dest = quat());
+
+        var qr = q1[0] * q2[0] + q1[1] * q2[1] + q1[2] * q2[2] + q1[3] * q2[3];
+        var ss = 1.0 - qr * qr;
+
+        if (ss <= 0.0) {
+            dest[0] = q1[0];
+            dest[1] = q1[1];
+            dest[2] = q1[2];
+            dest[3] = q1[3];
+        }
+        else {
+            ss = sqrt(ss);
+            var ph = acos(qr);
+            var pt = ph * time;
+            var t1 = sin(ph - pt) / ss;
+            var t2 = sin(pt) / ss;
+
+            dest[0] = q1[0] * t1 + q2[0] * t2;
+            dest[1] = q1[1] * t1 + q2[1] * t2;
+            dest[2] = q1[2] * t1 + q2[2] * t2;
+            dest[3] = q1[3] * t1 + q2[3] * t2;
+        }
 
         return dest;
     };
