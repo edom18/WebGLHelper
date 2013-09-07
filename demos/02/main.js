@@ -2,193 +2,146 @@
 
     'use strict';
 
-    var c = doc.getElementById('cv');
-    c.width = 500;
-    c.height = 300;
+    var cv = doc.getElementById('cv'),
+        gl = $gl.getGLContext(cv),
+        w = win.innerWidth,
+        h = win.innerHeight;
 
-    var gl = $gl.getGLContext(cv);
+    cv.width = w;
+    cv.height = h;
 
-    var eRange = doc.getElementById('range');
+    $gl.setViewport(0, 0, w, h);
+    $gl.setClearColor(0.0, 0.0, 0.0, 1.0);
 
     var prg = $gl.setupProgram({
         vertexShader: $gl.getShaderSourceFromDOM('vs'),
-        fragmentShader: $gl.getShaderSourceFromDOM('fs')
+        fragmentShader: $gl.getShaderSourceFromDOM('fs') 
     });
 
-    var attLoc = [
-        gl.getAttribLocation(prg, 'position'),
-        gl.getAttribLocation(prg, 'normal'),
-        gl.getAttribLocation(prg, 'color')
-    ];
-
-    var attSize = [ 3, 3, 4 ];
-
-    // 板ポリゴン
     var position = [
-        -1.0,  0.0, -1.0,
-         1.0,  0.0, -1.0,
-        -1.0,  0.0,  1.0,
-         1.0,  0.0,  1.0
+        -1.0,  1.0, 0.0, //v0
+        -1.0, -1.0, 0.0, //v1
+         1.0, -1.0, 0.0, //v2
+         1.0,  1.0, 0.0  //v3
     ];
-    var normal = [
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0,
-        0.0, 1.0, 0.0
+    var colors = [
+        1.0, 0.0, 0.0, 1.0, //v0
+        0.0, 1.0, 0.0, 1.0, //v1
+        0.0, 0.0, 1.0, 1.0, //v2
+        1.0, 0.0, 0.0, 1.0  //v3
     ];
-    var color = [
-        1.0, 1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0, 1.0,
-        1.0, 1.0, 1.0, 1.0
-    ];
-    var index = [
-        0, 1, 2,
-        3, 2, 1
+    var tex_coords = [
+        0.0, 0.0, //v0
+        0.0, 1.0, //v1
+        1.0, 1.0, //v2
+        1.0, 0.0  //v0
     ];
 
-    var vPosition = $gl.createBuffer($gl.ARRAY_BUFFER, position);
-    var vNormal = $gl.createBuffer($gl.ARRAY_BUFFER, normal);
-    var vColor  = $gl.createBuffer($gl.ARRAY_BUFFER, color);
-    var vIndex  = $gl.createBuffer($gl.ELEMENT_ARRAY_BUFFER, index);
-
-    var uniLoc = [
-        gl.getUniformLocation(prg, 'mMatrix'),
-        gl.getUniformLocation(prg, 'tMatrix'),
-        gl.getUniformLocation(prg, 'mvpMatrix'),
-        gl.getUniformLocation(prg, 'invMatrix'),
-        gl.getUniformLocation(prg, 'lightPosition'),
-        gl.getUniformLocation(prg, 'texture')
+    var indecies = [
+        0, 1, 2, 0, 2, 3
     ];
 
-    var mMatrix   = mat4();
-    var vMatrix   = mat4();
-    var pMatrix   = mat4();
-    var tmpMatrix = mat4();
-    var mvpMatrix = mat4();
-    var invMatrix = mat4();
-    var tMatrix   = mat4();
-    var tvMatrix  = mat4();
-    var tpMatrix  = mat4();
-    var tvpMatrix = mat4();
+    var vbo = $gl.createBuffer($gl.ARRAY_BUFFER, position);
+    var ibo = $gl.createBuffer($gl.ELEMENT_ARRAY_BUFFER, indecies);
+    var color_vbo = $gl.createBuffer($gl.ARRAY_BUFFER, colors);
+    var tex_coord_vbo = $gl.createBuffer($gl.ARRAY_BUFFER, tex_coords);
 
-    //テクスチャ関連
     var texture = $gl.setupTexture('texture.jpg');
-    gl.activeTexture(gl.TEXTURE0);
 
-    //ライトの位置
-    var lightPosition = vec3(-10.0, 10.0, 10.0);
-    
-    //ライトビューの上方向
-    var lightUpDirection = vec3(0.577, 0.577, -0.577);
+    var attLoc = gl.getAttribLocation(prg, 'a_position');
+    var attLoc2 = gl.getAttribLocation(prg, 'a_color');
+    var attLoc3 = gl.getAttribLocation(prg, 'a_texCoord');
 
-    var count = 0;
-    gl.enable(gl.DEPTH_TEST);
-    gl.depthFunc(gl.LEQUAL);
+    var uniLoc = gl.getUniformLocation(prg, 'u_mvpMatrix');
+    var uniLoc2 = gl.getUniformLocation(prg, 'u_texture');
+
+    gl.enableVertexAttribArray(attLoc);
+    gl.enableVertexAttribArray(attLoc2);
+    gl.enableVertexAttribArray(attLoc3);
+
+    var angle = 0;
+    var z = 10;
+
+    //プロジェクション変換マトリクスの生成
+    var projMatrix = mat4.perspective(60, w / h, 1, 100, mat4());
 
     (function loop() {
-        //canvasを初期化
-        gl.clearColor(0.0, 0.7, 0.7, 1.0);
-        gl.clearDepth(1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        count++;
+        //モデル変換マトリクスを生成
+        var modelMatrix = mat4();
 
-        var eyePosition = vec3();
-        var camUpDirection = vec3();
-        quat.toVec3(vec3(0.0, 0.0, 70.0), quat(), eyePosition);
-        quat.toVec3(vec3(0.0, 1.0, 0.0), quat(), camUpDirection);
-        vMatrix = mat4.lookAt(eyePosition, vec3(0, 0, 0), camUpDirection);
-        pMatrix = mat4.perspective(45, c.width / c.height, 0.1, 150);
-        mat4.multiply(pMatrix, vMatrix, tmpMatrix);
+        //最終的に使用されるMVP用マトリクスを生成
+        var mvpMatrix   = mat4();
 
-        //テクスチャのバインド
+        //ビュー座標変換マトリクスの生成
+        var viewMatrix = mat4.lookAt(vec3(0, 0, z), vec3(0, 0, 0), vec3(0, 1, 0), mat4());
+
+        angle = (angle + 1) % 360;
+        var qt = quat.rotate(angle * Math.PI / 180, vec3(0, 1, 0));
+        var qt2 = quat.rotate(angle * Math.PI / 180, vec3(1, 0, 0));
+        quat.multiply(qt, qt2, qt);
+        quat.toMat(qt, modelMatrix);
+        //mat4.rotate(modelMatrix, angle, vec3(0, 1, 0), modelMatrix);
+        mat4.scale(modelMatrix, vec3(5, 5, 5), modelMatrix);
+        mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
+        mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
+
+        /*! ----------------------------------------------------------------------------------
+         * draw**を呼び出す前に、そのdrawメソッドで使用するバッファ、
+         * テクスチャなどをすべて有効化、バインドしておく。
+         * ---------------------------------------------------------------------------------- */
+
+        //頂点位置バッファをバインド
+        $gl.setupBuffer({
+            buffer: vbo,
+            index: attLoc,
+            size: 3
+        }); 
+
+        //頂点色バッファをバインド
+        $gl.setupBuffer({
+            buffer: color_vbo,
+            index: attLoc2,
+            size: 4
+        });
+
+        //頂点テクスチャ座標バッファをバインド
+        $gl.setupBuffer({
+            buffer: tex_coord_vbo,
+            index: attLoc3,
+            size: 2
+        });
+
+        //インデックスバッファをバインド
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibo);
+
+        //使用するテクスチャをバインド・有効化
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.uniform1i(uniLoc2, texture);
 
-        //テクスチャ変換用行列
-        tMatrix = mat4([
-            0.5,  0.0, 0.0, 0.0,
-            0.0, -0.5, 0.0, 0.0,
-            0.0,  0.0, 1.0, 0.0,
-            0.5,  0.5, 0.0, 1.0
-        ]);
+        //最終的なMVPマトリクスをアップロード
+        gl.uniformMatrix4fv(uniLoc, false, mvpMatrix);
 
-        //ライトの距離をエレメントの値に応じて調整
-        var r = eRange.value / 5.0;
-        lightPosition[0] = -1.0 * r;
-        lightPosition[1] =  1.0 * r;
-        lightPosition[2] =  1.0 * r;
+        //色をクリア
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-        //ライトから見たビュー座標変換行列
-        tvMatrix = mat4.lookAt(lightPosition, vec3(0, 0, 0), lightUpDirection);
-
-        //ライトから見たプロジェクション座標変換行列
-        tpMatrix = mat4.perspective(90, 1.0, 0.1, 150);
-
-        //ライトから見た座標変換行列を掛け合わせる
-        mat4.multiply(tMatrix, tpMatrix, tvpMatrix);
-        mat4.multiply(tvpMatrix, tvMatrix, tMatrix);
-
-        //板ポリゴンの描画（底面）
-        $gl.setupBuffer({
-            buffer: vPosition,
-            index: attLoc[0],
-            size: attSize[0]
-        });
-
-        $gl.setupBuffer({
-            buffer: vNormal,
-            index: attLoc[1],
-            size: attSize[1]
-        });
-
-        $gl.setupBuffer({
-            buffer: vColor,
-            index: attLoc[2],
-            size: attSize[2]
-        });
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vIndex);
-
-        mat4.identity(mMatrix);
-        mat4.translate(mMatrix, vec3(0.0, -10.0, 0.0), mMatrix);
-        mat4.scale(mMatrix, vec3(20.0, 0.0, 20.0), mMatrix);
-        mat4.multiply(tmpMatrix, mMatrix, mvpMatrix);
-        mat4.inverse(mMatrix, invMatrix);
-        gl.uniformMatrix4fv(uniLoc[0], false, mMatrix);
-        gl.uniformMatrix4fv(uniLoc[1], false, mvpMatrix);
-        gl.uniformMatrix4fv(uniLoc[2], false, invMatrix);
-        gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
-
-        //板ポリゴンの描画（奥面）
-        mat4.identity(mMatrix);
-        mat4.translate(mMatrix, vec3(0.0, 10.0, -20.0), mMatrix);
-        mat4.rotate(mMatrix, $gl.degToRad(90), vec3(1, 0, 0), mMatrix);
-        mat4.scale(mMatrix, vec3(20.0, 0.0, 20.0), mMatrix);
-        mat4.multiply(tmpMatrix, mMatrix, mvpMatrix);
-        mat4.inverse(mMatrix, invMatrix);
-        gl.uniformMatrix4fv(uniLoc[0], false, mMatrix);
-        gl.uniformMatrix4fv(uniLoc[1], false, mvpMatrix);
-        gl.uniformMatrix4fv(uniLoc[2], false, invMatrix);
-        gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
-
-        //板ポリゴンの描画（右脇面）
-        mat4.identity(mMatrix);
-        mat4.translate(mMatrix, vec3(20.0, 10.0, 0.0), mMatrix);
-        mat4.rotate(mMatrix, $gl.degToRad(90), vec3(0, 0, 1), mMatrix);
-        mat4.scale(mMatrix, vec3(20.0, 0.0, 20.0), mMatrix);
-        mat4.multiply(tmpMatrix, mMatrix, mvpMatrix);
-        mat4.inverse(mMatrix, invMatrix);
-        gl.uniformMatrix4fv(uniLoc[0], false, mMatrix);
-        gl.uniformMatrix4fv(uniLoc[1], false, mvpMatrix);
-        gl.uniformMatrix4fv(uniLoc[2], false, invMatrix);
-        gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
-
-        //コンテキストの再描画
+        //上記で設定された情報を使ってドロー
+        //gl.drawArrays(gl.TRIANGLES, 0, 6);
+        gl.drawElements(gl.TRIANGLES, indecies.length, gl.UNSIGNED_SHORT, 0);
         gl.flush();
 
+        //アニメーションを実行するためにループ呼び出し
         requestAnimFrame(loop);
     }());
 
+    doc.addEventListener('mousewheel', function (e) {
+        z += e.wheelDelta / 100;
+    }, false);
+
+    doc.addEventListener('DOMMouseScroll', function (e) {
+        z += e.detail / 10;
+    }, false);
+
 }(window, document));
+
