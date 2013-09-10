@@ -278,6 +278,48 @@
         return '' + v[0] + ',' + v[1] + ',' + v[2];
     };
 
+    Object.defineProperty(vec3, 'zero', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 0, 0); }
+    });
+
+    Object.defineProperty(vec3, 'up', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 1, 0); }
+    });
+
+    Object.defineProperty(vec3, 'down', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, -1, 0); }
+    });
+
+    Object.defineProperty(vec3, 'forward', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 0, 1); }
+    });
+
+    Object.defineProperty(vec3, 'back', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 0, -1); }
+    });
+
+    Object.defineProperty(vec3, 'right', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(1, 0, 0); }
+    });
+
+    Object.defineProperty(vec3, 'left', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(-1, 0, 0); }
+    })
+
     /*!--------------------------------------------------
       EXPORTS
       ----------------------------------------------------- */
