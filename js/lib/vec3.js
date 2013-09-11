@@ -2,7 +2,9 @@
 
     'use strict';
 
-    var sqrt = Math.sqrt;
+    var PI   = Math.PI,
+        sqrt = Math.sqrt,
+        acos = Math.acos;
 
     /**
      * vec3
@@ -67,6 +69,9 @@
      * @param {Float32Array} dest
      */
     vec3.sub = function(v1, v2, dest) {
+
+        dest || (dest = vec3());
+
         dest[0] = v1[0] - v2[0];
         dest[1] = v1[1] - v2[1];
         dest[2] = v1[2] - v2[2];
@@ -80,6 +85,9 @@
      * @param {Float32Array} dest
      */
     vec3.add = function(v1, v2, dest) {
+
+        dest || (dest = vec3());
+
         dest[0] = v1[0] + v2[0];
         dest[1] = v1[1] + v2[1];
         dest[2] = v1[2] + v2[2];
@@ -92,6 +100,9 @@
      * @param {Float32Array} dest
      */
     vec3.copy = function(v, dest) {
+
+        dest || (dest = vec3());
+
         dest[0] = v[0];
         dest[1] = v[1];
         dest[2] = v[2];
@@ -131,6 +142,9 @@
      * @param {Float32Array} dest
      */
     vec3.multiply = function(v1, v2, dest) {
+
+        dest || (dest = vec3());
+
         dest[0] = v1[0] * v2[0];
         dest[1] = v1[1] * v2[1];
         dest[2] = v1[2] * v2[2];
@@ -144,6 +158,9 @@
      * @param {Float32Array} dest
      */
     vec3.multiplyScalar = function(v, s, dest) {
+
+        dest || (dest = vec3());
+
         dest[0] = v[0] * s;
         dest[1] = v[1] * s;
         dest[2] = v[2] * s;
@@ -176,6 +193,8 @@
      */
     vec3.cross = function(v1, v2, dest) {
 
+        dest || (dest = vec3());
+
         var v1x = v1[0],
             v1y = v1[1],
             v1z = v1[2],
@@ -198,6 +217,8 @@
      * @param {Float32Array} dest
      */
     vec3.applyMatrix4 = function(v, mat, dest) {
+
+        dest || (dest = vec3());
 
         var x = v[0],
             y = v[1],
@@ -240,6 +261,8 @@
      */
     vec3.applyProjection = function(v, mat, dest) {
 
+        dest || (dest = vec3());
+
         var w, x, y, z, _w, _x, _y, _z;
 
         x = v[0];
@@ -267,6 +290,30 @@
         dest[1] = w;
 
         return dest;
+    };
+
+    /**
+     * @param {Float32Array} from
+     * @param {Float32Array} to
+     * @return {number} angle number as radian.
+     */
+    vec3.lookAtRad = function (from, to) {
+
+        var sub = vec3.normalize(vec3.sub(to, from));
+        var fromCopy = vec3.normalize(vec3.copy(from));
+        var rad = vec3.dot(sub, fromCopy);
+
+        return acos(rad);
+    };
+
+    /**
+     * @param {Float32Array} from
+     * @param {Float32Array} to
+     * @return {number} angle number as degrees.
+     */
+    vec3.lookAtDeg = function (from, to) {
+        var rad = vec3.lookAtRad(from, to);
+        return rad * 180 / PI;
     };
 
     /**
