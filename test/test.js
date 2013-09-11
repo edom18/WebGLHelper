@@ -165,6 +165,92 @@
         });
     });
 
+
+    /**
+     * Vec2テスト
+     */
+    describe('vec2テスト', function () {
+        it('vec2()ですべて0で初期化される', function () {
+            var v = vec2();
+            assert.equal(0, v[0]);
+            assert.equal(0, v[1]);
+        });
+
+        it('vec2(x)ですべて同じ数字で初期化される', function () {
+            var v = vec2(2);
+            assert.equal(2, v[0]);
+            assert.equal(2, v[1]);
+        });
+
+        it('vec2(x, y)でx, yをそれぞれその値で初期化する', function () {
+            var v = vec2(2, 3, 4);
+            assert.equal(2, v[0]);
+            assert.equal(3, v[1]);
+        });
+
+        it('vec2([x, y])で渡した配列で初期化する', function () {
+            var v = vec2([2, 3, 4]);
+            assert.equal(2, v[0]);
+            assert.equal(3, v[1]);
+        });
+
+        it('vec2.sub(v1, v2, dest)でベクトルの減算ができる。その際、元のベクトルは操作されない。', function () {
+            var v1 = vec2(2, 3);
+            var v2 = vec2(2, 3);
+            var v3 = vec2.sub(v1, v2, vec2());
+            assert.equal(0, v3[0]);
+            assert.equal(0, v3[1]);
+            assert.equal(2, v1[0]);
+            assert.equal(3, v1[1]);
+            assert.equal(2, v2[0]);
+            assert.equal(3, v2[1]);
+        });
+
+        it('vec2.add(v1, v2, dest)でベクトルの加算ができる。その際、元のベクトルは操作されない。', function () {
+            var v1 = vec2(2, 3);
+            var v2 = vec2(2, 3);
+            var v3 = vec2.add(v1, v2, vec2());
+            assert.equal(4, v3[0]);
+            assert.equal(6, v3[1]);
+            assert.equal(2, v1[0]);
+            assert.equal(3, v1[1]);
+            assert.equal(2, v2[0]);
+            assert.equal(3, v2[1]);
+        });
+
+        it('vec2.multiply(v1, v2, dest)でベクトルの掛け算ができる', function () {
+            var v1 = vec2(1, 2);
+            var v2 = vec2(3, 4);
+            var v3 = vec2.multiply(v1, v2, vec2());
+
+            assert.equal(1 * 3, v3[0]);
+            assert.equal(2 * 4, v3[1]);
+        });
+
+        it('vec2.multiplyScalar(v, s, dest)でベクトルの掛け算ができる', function () {
+            var v1 = vec2(10, 15);
+            var v2 = vec2.multiplyScalar(v1, 5, vec2());
+            assert.equal(10 * 5, v2[0]);
+            assert.equal(15 * 5, v2[1]);
+        });
+
+        it('vec2.dot(v1, v2)でベクトルの内積を得る', function () {
+            var v1 = vec2(1, 2);
+            var v2 = vec2(10, 11);
+            var dot = vec2.dot(v1, v2);
+            assert.equal(1 * 10 + 2 * 11, dot);
+        });
+
+        it('vec2.toString(v)でカンマ区切りの文字列に変換できる', function () {
+            var v = vec2(2, 3);
+            assert.equal('2,3', vec2.toString(v));
+        });
+    });
+
+
+    /**
+     * Vec3テスト
+     */
     describe('vec3テスト', function () {
         it('vec3()ですべて0で初期化される', function () {
             var v = vec3();

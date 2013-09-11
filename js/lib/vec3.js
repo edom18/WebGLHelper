@@ -43,7 +43,7 @@
         var elements = [];
 
         if (Array.isArray(x)) {
-            elements = x;
+            elements = new Float32Array(x);
         }
         else if (x === undefined) {
             elements = [0, 0, 0];
