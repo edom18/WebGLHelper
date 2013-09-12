@@ -176,6 +176,22 @@
     };
 
     /**
+     * Calc cross
+     * @param {Float32Array} v1
+     * @param {Float32Array} v2
+     */
+    vec2.cross = function(v1, v2) {
+
+        var v1x = v1[0],
+            v1y = v1[1],
+
+            v2x = v2[0],
+            v2y = v2[1];
+
+        return v1x * v2y - v2x * v1y;
+    };
+
+    /**
      * @param {Float32Array} from
      * @param {Float32Array} to
      * @return {number} angle number as radian.
@@ -186,7 +202,14 @@
         var fromCopy = vec2.normalize(vec2.copy(from));
         var rad = vec2.dot(sub, fromCopy);
 
-        return acos(rad);
+        var dir = vec2.cross(sub, fromCopy);
+
+        if (dir > 0) {
+            return -acos(rad);
+        }
+        else {
+            return acos(rad);
+        }
     };
 
     /**
