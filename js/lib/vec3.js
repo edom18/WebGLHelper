@@ -16,6 +16,52 @@
         return vec3.create(x, y, z);
     }
 
+    ///////////////////////////////////////////////////////////////////
+
+    Object.defineProperty(vec3, 'zero', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 0, 0); }
+    });
+
+    Object.defineProperty(vec3, 'up', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 1, 0); }
+    });
+
+    Object.defineProperty(vec3, 'down', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, -1, 0); }
+    });
+
+    Object.defineProperty(vec3, 'forward', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 0, 1); }
+    });
+
+    Object.defineProperty(vec3, 'back', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(0, 0, -1); }
+    });
+
+    Object.defineProperty(vec3, 'right', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(1, 0, 0); }
+    });
+
+    Object.defineProperty(vec3, 'left', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec3(-1, 0, 0); }
+    });
+
+    ///////////////////////////////////////////////////////////////////
+
     /**
      * Check to equal values.
      * @param {vec3} v
@@ -297,14 +343,26 @@
      * @param {Float32Array} to
      * @return {number} angle number as radian.
      */
-    vec3.lookAtRad = function (from, to) {
+    vec3.lookAtRad = (function () {
 
-        var sub = vec3.normalize(vec3.sub(to, from));
-        var fromCopy = vec3.normalize(vec3.copy(from));
-        var rad = vec3.dot(sub, fromCopy);
+        var zero = vec3.zero;
 
-        return acos(rad);
-    };
+        function lookAtRad(from, to) {
+
+            if (vec3.equal(from, zero)) {
+                from = vec3.zero;
+                from[0] = 0.00001;
+            }
+
+            var sub = vec3.normalize(vec3.sub(to, from));
+            var fromCopy = vec3.normalize(vec3.copy(from));
+            var rad = vec3.dot(sub, fromCopy);
+
+            return acos(rad);
+        }
+
+        return lookAtRad;
+    }());
 
     /**
      * @param {Float32Array} from
@@ -324,48 +382,6 @@
     vec3.toString = function(v) {
         return '' + v[0] + ',' + v[1] + ',' + v[2];
     };
-
-    Object.defineProperty(vec3, 'zero', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec3(0, 0, 0); }
-    });
-
-    Object.defineProperty(vec3, 'up', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec3(0, 1, 0); }
-    });
-
-    Object.defineProperty(vec3, 'down', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec3(0, -1, 0); }
-    });
-
-    Object.defineProperty(vec3, 'forward', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec3(0, 0, 1); }
-    });
-
-    Object.defineProperty(vec3, 'back', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec3(0, 0, -1); }
-    });
-
-    Object.defineProperty(vec3, 'right', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec3(1, 0, 0); }
-    });
-
-    Object.defineProperty(vec3, 'left', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec3(-1, 0, 0); }
-    })
 
     /*!--------------------------------------------------
       EXPORTS

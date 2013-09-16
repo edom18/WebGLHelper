@@ -17,6 +17,52 @@
         return vec4.create(x, y, z, w);
     }
 
+    ///////////////////////////////////////////////////////////////////
+
+    Object.defineProperty(vec4, 'zero', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec4(0, 0, 0, 1); }
+    });
+
+    Object.defineProperty(vec4, 'up', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec4(0, 1, 0, 1); }
+    });
+
+    Object.defineProperty(vec4, 'down', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec4(0, -1, 0, 1); }
+    });
+
+    Object.defineProperty(vec4, 'forward', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec4(0, 0, 1, 1); }
+    });
+
+    Object.defineProperty(vec4, 'back', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec4(0, 0, -1, 1); }
+    });
+
+    Object.defineProperty(vec4, 'right', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec4(1, 0, 0, 1); }
+    });
+
+    Object.defineProperty(vec4, 'left', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec4(-1, 0, 0, 1); }
+    });
+
+    ///////////////////////////////////////////////////////////////////
+
     /**
      * Check to equal values.
      * @param {Float32Array} v1

@@ -15,6 +15,40 @@
         return vec2.create(x, y);
     }
 
+    /////////////////////////////////////////////////////////////////////
+
+    Object.defineProperty(vec2, 'zero', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec2(0, 0); }
+    });
+
+    Object.defineProperty(vec2, 'up', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec2(0, 1); }
+    });
+
+    Object.defineProperty(vec2, 'down', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec2(0, -1); }
+    });
+
+    Object.defineProperty(vec2, 'right', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec2(1, 0); }
+    });
+
+    Object.defineProperty(vec2, 'left', {
+        enumerable: true,
+        set: function (x) {},
+        get: function () { return vec2(-1, 0); }
+    });
+
+    /////////////////////////////////////////////////////////////////////
+
     /**
      * Check to equal values.
      * @param {vec2} v
@@ -196,21 +230,33 @@
      * @param {Float32Array} to
      * @return {number} angle number as radian.
      */
-    vec2.lookAtRad = function (from, to) {
+    vec2.lookAtRad = (function () {
 
-        var sub = vec2.normalize(vec2.sub(to, from));
-        var fromCopy = vec2.normalize(vec2.copy(from));
-        var rad = vec2.dot(sub, fromCopy);
+        var zero = vec2.zero;
 
-        var dir = vec2.cross(sub, fromCopy);
+        function lookAtRad(from, to) {
 
-        if (dir > 0) {
-            return -acos(rad);
+            if (vec2.equal(from, zero)) {
+                from = vec2.zero;
+                from[0] = 0.00001;
+            }
+
+            var sub = vec2.normalize(vec2.sub(to, from));
+            var fromCopy = vec2.normalize(vec2.copy(from));
+            var rad = vec2.dot(sub, fromCopy);
+
+            var dir = vec2.cross(sub, fromCopy);
+
+            if (dir > 0) {
+                return -acos(rad);
+            }
+            else {
+                return acos(rad);
+            }
         }
-        else {
-            return acos(rad);
-        }
-    };
+
+        return lookAtRad;
+    }());
 
     /**
      * @param {Float32Array} from
@@ -230,36 +276,6 @@
     vec2.toString = function(v) {
         return '' + v[0] + ',' + v[1];
     };
-
-    Object.defineProperty(vec2, 'zero', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec2(0, 0); }
-    });
-
-    Object.defineProperty(vec2, 'up', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec2(0, 1); }
-    });
-
-    Object.defineProperty(vec2, 'down', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec2(0, -1); }
-    });
-
-    Object.defineProperty(vec2, 'right', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec2(1, 0); }
-    });
-
-    Object.defineProperty(vec2, 'left', {
-        enumerable: true,
-        set: function (x) {},
-        get: function () { return vec2(-1, 0); }
-    });
 
     /*!--------------------------------------------------
       EXPORTS
