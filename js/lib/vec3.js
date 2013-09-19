@@ -386,7 +386,7 @@
         y = v[1];
         z = v[2];
 
-         w = mat[3] * x + mat[7] * y + mat[11] * z + mat[15];
+        w = mat[3] * x + mat[7] * y + mat[11] * z + mat[15];
 
         //wで除算するため、予め割った値を入れておく
         _w = 1 / w;
@@ -399,12 +399,9 @@
             return false;
         }
 
-        v[0] = _x * _w;
-        v[1] = _y * _w;
-        v[2] = _z * _w;
-        
-        dest[0] = v;
-        dest[1] = w;
+        dest[0] = _x * _w;
+        dest[1] = _y * _w;
+        dest[2] = _z * _w;
 
         return dest;
     };
