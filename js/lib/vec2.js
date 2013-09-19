@@ -70,7 +70,8 @@
      */
     vec2.create = function(x, y) {
 
-        var elements = [];
+        var elements = [],
+            ret;
 
         if (Array.isArray(x)) {
             elements = new Float32Array(x);
@@ -85,7 +86,27 @@
             elements = [x, y];
         }
 
-        return new Float32Array(elements);
+        ret = new Float32Array(elements);
+        Object.defineProperties(ret, {
+            'x': {
+                get: function () {
+                    return this[0];
+                },
+                set: function (x) {
+                    this[0] = x;
+                }
+            },
+            'y': {
+                get: function () {
+                    return this[1];
+                },
+                set: function (y) {
+                    this[1] = y;
+                }
+            }
+        });
+
+        return ret;
     };
 
 

@@ -86,7 +86,8 @@
      */
     vec3.create = function(x, y, z) {
 
-        var elements = [];
+        var elements = [],
+            ret;
 
         if (Array.isArray(x)) {
             elements = new Float32Array(x);
@@ -104,7 +105,77 @@
             elements = [x, y, z];
         }
 
-        return new Float32Array(elements);
+        ret = new Float32Array(elements);
+        Object.defineProperties(ret, {
+            'x': {
+                get: function () {
+                    return this[0];
+                },
+                set: function (x) {
+                    this[0] = x;
+                }
+            },
+            'y': {
+                get: function () {
+                    return this[1];
+                },
+                set: function (y) {
+                    this[1] = y;
+                }
+            },
+            'z': {
+                get: function () {
+                    return this[2];
+                },
+                set: function (z) {
+                    this[2] = z;
+                }
+            },
+            'xy': {
+                get: function () {
+                    return vec2(this.x, this.y);
+                },
+                set: function (v) {
+                    this[0] = v[0];
+                    this[1] = v[1];
+                }
+            },
+            'r': {
+                get: function () {
+                    return this[0];
+                },
+                set: function (r) {
+                    this[0] = r;
+                }
+            },
+            'g': {
+                get: function () {
+                    return this[1];
+                },
+                set: function (g) {
+                    this[1] = g;
+                }
+            },
+            'b': {
+                get: function () {
+                    return this[2];
+                },
+                set: function (b) {
+                    this[2] = b;
+                }
+            },
+            'rg': {
+                get: function () {
+                    return vec2(this[0], this[1]);
+                },
+                set: function (v) {
+                    this[0] = v[0];
+                    this[1] = v[1];
+                }
+            }
+        });
+
+        return ret;
     };
 
 
