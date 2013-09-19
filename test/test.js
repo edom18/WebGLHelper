@@ -194,6 +194,28 @@
             assert.equal(3, v[1]);
         });
 
+        it('生成後のFloat32Arrayは、arr.xでひとつめの要素を返す', function () {
+            var v = vec2([2, 3]);
+            assert.equal(2, v.x);
+        });
+
+        it('生成後のFloat32Arrayは、arr.yでひとつめの要素を返す', function () {
+            var v = vec2([2, 3]);
+            assert.equal(3, v.y);
+        });
+
+        it('生成後のFloat32Arrayは、arr.x = *でひとつめの要素に値を設定できる', function () {
+            var v = vec2();
+            v.x = 10;
+            assert.equal(10, v[0]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.y = *でふたつめの要素に値を設定できる', function () {
+            var v = vec2();
+            v.y = 20;
+            assert.equal(20, v[1]);
+        });
+
         it('vec2.sub(v1, v2, dest)でベクトルの減算ができる。その際、元のベクトルは操作されない。', function () {
             var v1 = vec2(2, 3);
             var v2 = vec2(2, 3);
@@ -286,6 +308,106 @@
             assert.equal(3, v[1]);
             assert.equal(4, v[2]);
         });
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        it('生成後のFloat32Arrayは、arr.xでひとつめの要素を返す', function () {
+            var v = vec3([2, 3, 4]);
+            assert.equal(2, v.x);
+        });
+
+        it('生成後のFloat32Arrayは、arr.yでふたつめの要素を返す', function () {
+            var v = vec3([2, 3, 4]);
+            assert.equal(3, v.y);
+        });
+
+        it('生成後のFloat32Arrayは、arr.zでみっつめの要素を返す', function () {
+            var v = vec3([2, 3, 4]);
+            assert.equal(4, v.z);
+        });
+
+        it('生成後のFloat32Arrayは、arr.xyで最初のふたつの要素をvec2として返す', function () {
+            var v = vec3([2, 3, 4]);
+            var xy = v.xy;
+            var v2 = vec2(2, 3);
+            assert.equal(true, vec2.equal(xy, v2));
+        });
+
+        it('生成後のFloat32Arrayは、arr.x = xでひとつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.x = 10;
+            assert.equal(10, v[0]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.y = yでふたつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.y = 20;
+            assert.equal(20, v[1]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.z = zでみっつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.z = 30;
+            assert.equal(30, v[2]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.xy = vec2(x, y)でひとつめとふたつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.xy = vec2(1, 2);
+            assert.equal(1, v[0]);
+            assert.equal(2, v[1]);
+        });
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+
+        it('生成後のFloat32Arrayは、arr.rでひとつめの要素を返す', function () {
+            var v = vec3([2, 3, 4]);
+            assert.equal(2, v.r);
+        });
+
+        it('生成後のFloat32Arrayは、arr.gでふたつめの要素を返す', function () {
+            var v = vec3([2, 3, 4]);
+            assert.equal(3, v.g);
+        });
+
+        it('生成後のFloat32Arrayは、arr.bでみっつめの要素を返す', function () {
+            var v = vec3([2, 3, 4]);
+            assert.equal(4, v.b);
+        });
+
+        it('生成後のFloat32Arrayは、arr.rgで最初のふたつの要素をvec2として返す', function () {
+            var v = vec3([2, 3, 4]);
+            var rg = v.rg;
+            var v2 = vec2(2, 3);
+            assert.equal(true, vec2.equal(rg, v2));
+        });
+
+        it('生成後のFloat32Arrayは、arr.r = rでひとつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.r = 10;
+            assert.equal(10, v[0]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.g = gでふたつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.g = 20;
+            assert.equal(20, v[1]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.b = bでみっつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.b = 30;
+            assert.equal(30, v[2]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.rg = vec2(r, g)でひとつめとふたつめの要素に値を設定できる', function () {
+            var v = vec3();
+            v.rg = vec2(1, 2);
+            assert.equal(1, v[0]);
+            assert.equal(2, v[1]);
+        });
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////
 
         it('vec3.sub(v1, v2, dest)でベクトルの減算ができる。その際、元のベクトルは操作されない。', function () {
             var v1 = vec3(2, 3, 4);
@@ -396,6 +518,145 @@
             assert.equal(3, v[1]);
             assert.equal(4, v[2]);
             assert.equal(5, v[3]);
+        });
+
+        //////////////////////////////////////////////////////////////////////////////
+
+        it('生成後のFloat32Arrayは、arr.xでひとつめの要素を返す', function () {
+            var v = vec4([2, 3, 4, 5]);
+            assert.equal(2, v.x);
+        });
+
+        it('生成後のFloat32Arrayは、arr.yでふたつめの要素を返す', function () {
+            var v = vec4([2, 3, 4, 5]);
+            assert.equal(3, v.y);
+        });
+
+        it('生成後のFloat32Arrayは、arr.zでみっつめの要素を返す', function () {
+            var v = vec4([2, 3, 4, 5]);
+            assert.equal(4, v.z);
+        });
+
+        it('生成後のFloat32Arrayは、arr.wでよっつめの要素を返す', function () {
+            var v = vec4([2, 3, 4, 5]);
+            assert.equal(5, v.w);
+        });
+
+        it('生成後のFloat32Arrayは、arr.xyで最初のふたつの要素をvec2として返す', function () {
+            var v = vec4([2, 3, 4, 5]);
+            var xy = v.xy;
+            var v2 = vec2(2, 3);
+            assert.equal(true, vec2.equal(xy, v2));
+        });
+
+        it('生成後のFloat32Arrayは、arr.xyzで最初のふたつの要素をvec3として返す', function () {
+            var v = vec4([2, 3, 4, 5]);
+            var xyz = v.xyz;
+            var v3 = vec3(2, 3, 4);
+            assert.equal(true, vec3.equal(xyz, v3));
+        });
+
+        it('生成後のFloat32Arrayは、arr.x = xでひとつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.x = 10;
+            assert.equal(10, v[0]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.y = yでふたつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.y = 20;
+            assert.equal(20, v[1]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.z = zでみっつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.z = 30;
+            assert.equal(30, v[2]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.w = wでみっつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.w = 40;
+            assert.equal(40, v[3]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.xy = vec2(x, y)でひとつめとふたつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.xy = vec2(1, 2);
+            assert.equal(1, v[0]);
+            assert.equal(2, v[1]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.xyz = vec3(x, y, z)でひとつめ〜みっつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.xyz = vec3(1, 2, 3);
+            assert.equal(1, v[0]);
+            assert.equal(2, v[1]);
+            assert.equal(3, v[2]);
+        });
+
+        /////////////////////////////////////////////////////////////////////////////////////////////
+
+        it('生成後のFloat32Arrayは、arr.rでひとつめの要素を返す', function () {
+            var v = vec4([2, 3, 4]);
+            assert.equal(2, v.r);
+        });
+
+        it('生成後のFloat32Arrayは、arr.gでふたつめの要素を返す', function () {
+            var v = vec4([2, 3, 4]);
+            assert.equal(3, v.g);
+        });
+
+        it('生成後のFloat32Arrayは、arr.bでみっつめの要素を返す', function () {
+            var v = vec3([2, 3, 4]);
+            assert.equal(4, v.b);
+        });
+
+        it('生成後のFloat32Arrayは、arr.rgで最初のふたつの要素をvec2として返す', function () {
+            var v = vec4([2, 3, 4]);
+            var rg = v.rg;
+            var v2 = vec2(2, 3);
+            assert.equal(true, vec2.equal(rg, v2));
+        });
+
+        it('生成後のFloat32Arrayは、arr.rgbで最初のふたつの要素をvec3として返す', function () {
+            var v = vec4([2, 3, 4]);
+            var rgb = v.rgb;
+            var v3 = vec3(2, 3, 4);
+            assert.equal(true, vec3.equal(rgb, v3));
+        });
+
+        it('生成後のFloat32Arrayは、arr.r = rでひとつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.r = 10;
+            assert.equal(10, v[0]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.g = gでふたつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.g = 20;
+            assert.equal(20, v[1]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.b = bでみっつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.b = 30;
+            assert.equal(30, v[2]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.rg = vec2(r, g)でひとつめとふたつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.rg = vec2(1, 2);
+            assert.equal(1, v[0]);
+            assert.equal(2, v[1]);
+        });
+
+        it('生成後のFloat32Arrayは、arr.rgb = vec3(r, g, b)でひとつめとふたつめの要素に値を設定できる', function () {
+            var v = vec4();
+            v.rgb = vec3(1, 2, 3);
+            assert.equal(1, v[0]);
+            assert.equal(2, v[1]);
+            assert.equal(3, v[2]);
         });
     });
 
