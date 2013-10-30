@@ -11,7 +11,7 @@
     cv.height = h;
 
     $gl.setViewport(0, 0, w, h);
-    $gl.setClearColor(0.0, 0.0, 0.0, 1.0);
+    $gl.setClearColor(0.1, 0.1, 0.1, 1.0);
 
     var prg = $gl.setupProgram({
         vertexShader: $gl.getShaderSourceFromDOM('vs'),
@@ -62,34 +62,62 @@
     var angle = 0;
     var z = 10;
 
+    var mouse = {
+        x: 0,
+        y: 0
+    };
+
+    var cnt = 0;
+
+    var SCREEN_WIDTH = win.innerWidth;
+    var SCREEN_HEIGHT = win.innerHeight;
+
+    cv.addEventListener('mousemove', function (e) {
+        mouse.x =  (e.pageX / w) * 2 - 1;
+        mouse.y = -(e.pageY / h) * 2 + 1;
+    });
+
     //プロジェクション変換マトリクスの生成
     var projMatrix = mat4.perspective(60, w / h, 1, 100, mat4());
 
-    (function loop() {
+    //ビュー座標変換マトリクスの生成
+    var viewMatrix = mat4.lookAt(vec3(0, 0, z), vec3(0, 0, 0), vec3(0, 1, 0));
 
+    var autoPlay = true;
+    function loop() {
         //モデル変換マトリクスを生成
         var modelMatrix = mat4();
 
         //最終的に使用されるMVP用マトリクスを生成
         var mvpMatrix   = mat4();
 
-        //ビュー座標変換マトリクスの生成
-        var viewMatrix = mat4.lookAt(vec3(0, 0, z), vec3(0, 0, 0), vec3(0, 1, 0), mat4());
-
         angle = (angle + 1) % 360;
-        var qt = quat.rotate(angle * Math.PI / 180, vec3(0, 1, 0));
-        var qt2 = quat.rotate(angle * Math.PI / 180, vec3(1, 0, 0));
-        quat.multiply(qt, qt2, qt);
-        quat.toMat(qt, modelMatrix);
-        //mat4.rotate(modelMatrix, angle, vec3(0, 1, 0), modelMatrix);
-        mat4.scale(modelMatrix, vec3(5, 5, 5), modelMatrix);
+        //var qt = quat.rotate(angle * Math.PI / 180, vec3(0, 1, 0));
+        //var qt2 = quat.rotate(angle * Math.PI / 180, vec3(1, 0, 0));
+        //quat.multiply(qt, qt2, qt);
+        //quat.toMat(qt, modelMatrix);
+        //mat4.scale(modelMatrix, vec3(5, 5, 5), modelMatrix);
         mat4.multiply(projMatrix, viewMatrix, mvpMatrix);
         mat4.multiply(mvpMatrix, modelMatrix, mvpMatrix);
+
+        var pos = vec3(mouse.x, mouse.y, 0);
+        var invProjMatrix = mat4.inverse(projMatrix);
+        var invViewMatrix = mat4.inverse(viewMatrix);
+        var pvmMatrix = mat4();
+
+        mat4.multiply(invViewMatrix, invProjMatrix, pvmMatrix);
+        vec3.applyProjection(pos, pvmMatrix, pos);
+
 
         /*! ----------------------------------------------------------------------------------
          * draw**を呼び出す前に、そのdrawメソッドで使用するバッファ、
          * テクスチャなどをすべて有効化、バインドしておく。
          * ---------------------------------------------------------------------------------- */
+
+        position[0] = pos[0];
+        position[1] = pos[1];
+        position[2] = pos[2];
+        vbo = $gl.createBuffer($gl.ARRAY_BUFFER, position);
 
         //頂点位置バッファをバインド
         $gl.setupBuffer({
@@ -132,8 +160,12 @@
         gl.flush();
 
         //アニメーションを実行するためにループ呼び出し
-        requestAnimFrame(loop);
-    }());
+        autoPlay && requestAnimFrame(loop);
+    }
+
+    doc.addEventListener('click', loop, false);
+
+    loop();
 
     doc.addEventListener('mousewheel', function (e) {
         z += e.wheelDelta / 100;
