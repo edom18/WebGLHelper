@@ -1,3 +1,8 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title></title>
 <script id="vs" type="x-shader/x-vertex">
     attribute vec3 a_position;
     attribute vec4 a_color;
@@ -26,6 +31,15 @@
         gl_FragColor = texture2D(u_texture, v_texCoord);
     }
 </script>
+<style>
+    html {
+        overflow: hidden;
+    }
+    body, div {
+        margin: 0;
+        padding: 0;
+    }
+</style>
 </head>
 <body>
     <canvas id="cv"></canvas>
