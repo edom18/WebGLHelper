@@ -5,6 +5,11 @@
     var gl,
         loading_image_queue = [];
 
+    /**
+     * WebGL helper
+     *
+     * @require util.js
+     */
     var WebGLHelper = {
 
         //const variables.
@@ -124,6 +129,62 @@
         },
 
         /**
+         * Get attribute locations with program.
+         *
+         * @param {WebGLProgram} program
+         * @param {Array<string>} attribNames
+         * @param {Array} dstLocation
+         *
+         * @return {Array} locations
+         */
+        getAttribLocations: function (program, attribNames, dstLocation) {
+            dstLocation || (dstLocation = []);
+
+            for (var i = 0, l = attribNames.length; i < l; i++) {
+                dstLocation[i] = gl.getAttribLocation(program, attribNames[i]);
+            }
+
+            return dstLocation;
+        },
+
+
+        /**
+         * Get uniform locations with program.
+         *
+         * @param {WebGLProgram} program
+         * @param {Array<string>} uniformNames
+         * @param {Array} dstLocation
+         *
+         * @return {Array} locations
+         */
+        getUniformLocations: function (program, uniformNames, dstLocation) {
+            dstLocation || (dstLocation = []);
+
+            for (var i = 0, l = uniformNames.length; i < l; i++) {
+                dstLocation[i] = gl.getUniformLocation(program, uniformNames[i]);
+            }
+        },
+
+        /**
+         * Load a shader.
+         *
+         * @param {string} type
+         * @param {string} url
+         *
+         * @return {Deffered}
+         */
+        loadShader: function (type, url, callback) {
+            var def = new util.Deferred();
+            var shaderType = (type === 'vertex') ? this.VERTEX_SHADER : this.FRAGMENT_SHADER;
+
+            util.ajax(url).done(util.bind(function (source) {
+                def.resolve(this.createShader(shaderType, source))
+            }, this));
+
+            return def;
+        },
+
+        /**
          * Create a shader with a source.
          * @param {WebGLContext} gl
          * @param {string} type shader type
@@ -198,6 +259,28 @@
         },
 
         /**
+         * Create a VBO
+         *
+         * @param {Float32Array} data
+         * 
+         * @return {WebGLBuffer}
+         */
+        createVBO: function (data) {
+            return this.createBuffer(this.ARRAY_BUFFER, data);
+        },
+
+        /**
+         * Create a IBO
+         *
+         * @param {Float32Array} data
+         * 
+         * @return {WebGLBuffer}
+         */
+        createIBO: function (data) {
+            return this.createBuffer(this.ELEMENT_ARRAY_BUFFER, data);
+        },
+
+        /**
          * Set up frame buffer for off screen rendering.
          * @param {number} width
          * @param {number} height
@@ -267,6 +350,7 @@
             gl.vertexAttribPointer(index, size, gl.FLOAT, false, stride, offset);
         },
 
+
         /**
          * Set up an index buffer.
          */
@@ -275,11 +359,29 @@
         },
 
         /**
+         * Set up attributes.
+         *
+         * @param {Array<WebGLBuffer>} vbos
+         * @param {Array<number>} attributes
+         * @param {Array<number>} strides
+         */
+        setupAttributes: function (vbos, attributes, strides) {
+            for (var i = 0, l = vbos.length; i < l; i++) {
+                gl.bindBuffer(gl.ARRAY_BUFFER, vbos[i]);
+                gl.enableVertexAttribArray(attributes[i]);
+                gl.vertexAttribPointer(attributes[i], strides[i], gl.FLOAT, false, 0, 0);
+            }
+        },
+
+        /**
          * Create a texture object.
+         *
          * @param {string} url
+         * @param {Function} callback
+         *
          * @return {WebGLTexture}
          */
-        setupTexture: function (url) {
+        setupTexture: function (url, callback) {
 
             var img     = new Image(),
                 texture = gl.createTexture();
@@ -299,6 +401,9 @@
                 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
                 gl.generateMipmap(gl.TEXTURE_2D);
                 gl.bindTexture(gl.TEXTURE_2D, null);
+
+                callback && callback(texture);
+                texture = null;
             };
             img.src = url;
 
@@ -316,13 +421,27 @@
                 throw new Error('An argument must be like Object.'); 
             }
 
-            var vs  = this.createShader(this.VERTEX_SHADER, args.vertexShader);
-            var fs  = this.createShader(this.FRAGMENT_SHADER, args.fragmentShader);
-            var prg = this.createProgram(vs, fs);
+            var vs;
+            if (util.isString(args.vertexShader)) {
+                vs  = this.createShader(this.VERTEX_SHADER, args.vertexShader);
+            }
+            else {
+                vs = args.vertexShader;
+            }
 
-            return prg;
+            var fs;
+            if (util.isString(args.fragmentShader)) {
+                fs  = this.createShader(this.FRAGMENT_SHADER, args.fragmentShader);
+            }
+            else {
+                fs = args.fragmentShader;
+            }
+
+            return this.createProgram(vs, fs);
         }
     };
+
+    WebGLHelper.$ = WebGLHelper.getShaderSourceFromDOM;
 
     var requestAnimFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.msRequestAnimationFrame ||
                            function (func) {
