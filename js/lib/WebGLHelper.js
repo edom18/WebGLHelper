@@ -443,6 +443,49 @@
         }
     };
 
+    WebGLHelper.utility = {
+
+        /**
+         * Render object class.
+         *
+         * @param {WebGLProgram} program
+         * @param {Model} model it has position, normal, color, texCoord, index.
+         * @param {Array<string>} attributes
+         * @param {Array<number>} stride
+         * @param {Array<string>} uniforms
+         */
+        RenderObject: function (program, model, attributes, stride, uniforms) {
+            // for attributes.
+            this.VBOs = [];
+            this.attrLocations = [];
+            for (var i = 0; i < attributes.length; i++) {
+                var attr = attributes[i];
+                this.VBOs[i] = WebGLHelper.createVBO(model[attr]);
+                this.attrLocations[i] = gl.getAttribLocation(program, attr);
+            }
+            this.index  = WebGLHelper.createIBO(model.index);
+            this.length = model.index.length;
+            this.stride = stride;
+
+            // for uniforms.
+            this.uniLocations = {};
+            for (i = 0; i < uniforms.length; i++) {
+                var uniformName = uniforms[i];
+                this.uniLocations[uniformName] = gl.getUniformLocation(program, uniformName);
+            }
+        },
+
+        /**
+         * Set render object.
+         *
+         * @param {RenderObject} obj
+         */
+        setRenderObject: function (obj) {
+            WebGLHelper.setupAttributes(obj.VBOs, obj.attrLocations, obj.stride);
+            WebGLHelper.setupIndex(obj.index);
+        }
+    };
+
     WebGLHelper.$ = WebGLHelper.getShaderSourceFromDOM;
 
     var requestAnimFrame = win.requestAnimationFrame || win.mozRequestAnimationFrame || win.msRequestAnimationFrame ||
